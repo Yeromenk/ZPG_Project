@@ -7,16 +7,13 @@
  * @author Yeromenko Maksym
   **/
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include "Application.h"
 
 int main(void) {
     Application* app = new Application();
-    app->initialization();  // initialization OpenGL
-
-	// Loading shaders and models
-    app->createShaders();
-    app->createModels();
-	app->run();  // Launch application
+    app->run();  // Launch application
 
     delete app;  // Release of resources
     return 0;

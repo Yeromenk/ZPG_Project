@@ -7,11 +7,15 @@ class Shader {
 public:
     Shader();
     ~Shader();
-    void createShaderPrograms(bool isQuad);
+
     void use();
+    void use_quad();
+
     GLuint getProgramID();
+    GLuint getProgramID_quad();
 private:
     GLuint shaderProgram;
+    GLuint shaderProgram_quad;
     GLuint loadShader(const char* source, GLenum shaderType);
 };
 

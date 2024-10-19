@@ -1,86 +1,42 @@
 #include "Model.h"
 
 
-Model::Model() {}
-
+Model::Model(ShaderProgram* shader) : DrawableObject(shader), vao(0), vbo(0), ebo(0) {}
 
 Model::~Model() {
-	glDeleteBuffers(1, &VBO_triangle);
-	glDeleteVertexArrays(1, &VAO_triangle);
-	glDeleteBuffers(1, &VBO_rectangle);
-	glDeleteVertexArrays(1, &VAO_rectangle);
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
 }
 
-void Model::createTriangle() {
-	float points[] = {
-		-0.3f,  0.5f, 0.0f,
-		 0.3f, -0.5f, 0.0f,
-		-0.9f, -0.5f, 0.0f
-	};
+void Model::load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
+    this->vertices = vertices;
+    this->indices = indices;
 
-	// Create a vertex buffer object
-	glGenBuffers(1, &VBO_triangle);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-	// Create a vertex array object
-	glGenVertexArrays(1, &VAO_triangle);
-	glBindVertexArray(VAO_triangle);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
+void Model::draw() {
+    shader->use();
+    transformation.apply(shader);
 
-void Model::createRectangle() {
-	float points[] = {
-		-.5f, -.5f, .5f,  0, 0, 1,
-		-.5f, .5f, .5f,  0, 0, 1,
-	   .5f, .5f, .5f,  0, 0, 1,
-	   .5f, -.5f, .5f,  0, 0, 1
-	};
-
-	glGenBuffers(1, &VBO_rectangle);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_rectangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAO_rectangle);
-	glBindVertexArray(VAO_rectangle);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_rectangle); // ??
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-}
-
-void Model::renderTriangle() {
-	glBindVertexArray(VAO_triangle);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-void Model::renderRectangle() {
-	glBindVertexArray(VAO_rectangle);
-	glDrawArrays(GL_QUADS, 0, 4);
-}
-
-void Model::createTree() {
-	glGenBuffers(1, &VBO_tree);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_tree);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(tree), tree, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAO_tree);
-	glBindVertexArray(VAO_tree);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_tree);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-}
-
-void Model::renderTree() {
-	glBindVertexArray(VAO_tree);
-	glDrawArrays(GL_TRIANGLES, 0, 92814);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }

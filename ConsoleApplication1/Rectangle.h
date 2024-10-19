@@ -2,12 +2,11 @@
 
 #include <GL/glew.h>
 #include "DrawableObject.h"
-#include "Models/tree.h"
 
 
-class Tree : public DrawableObject {
+class Rectangle : public DrawableObject {
 public:
-    Tree(ShaderProgram* shader);
+    Rectangle(ShaderProgram* shader, float* vertices, size_t size);
     void draw() override;
 
 private:

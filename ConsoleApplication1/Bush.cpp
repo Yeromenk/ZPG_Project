@@ -1,13 +1,13 @@
-#include "Tree.h"
+#include "Bush.h"
 
-Tree::Tree(ShaderProgram* shader) : DrawableObject(shader) {
+Bush::Bush(ShaderProgram* shader) : DrawableObject(shader) {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tree), tree, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(bushes), bushes, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -19,11 +19,11 @@ Tree::Tree(ShaderProgram* shader) : DrawableObject(shader) {
     glBindVertexArray(0);
 }
 
-void Tree::draw() {
+void Bush::draw() {
     shader->use();
     transformation.apply(shader);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 92814); // Adjust the number of vertices as needed
+    glDrawArrays(GL_TRIANGLES, 0, 8730); // Adjust the number of vertices as needed
     glBindVertexArray(0);
 }

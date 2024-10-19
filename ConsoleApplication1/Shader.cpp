@@ -1,63 +1,48 @@
 #include "Shader.h"
 #include <iostream>
 
-Shader::Shader() {}
+// Constructor: Initializes shader program IDs to 0.
+Shader::Shader() : shaderProgram(0), shaderProgram_quad(0) {}
 
+// Destructor: Deletes the shader programs.
 Shader::~Shader() {
     glDeleteProgram(shaderProgram);
+    glDeleteProgram(shaderProgram_quad);
 }
 
-void Shader::createShaderPrograms(bool isQuad) {
-    const char* vertex_shader =
-        "#version 330\n"
-        "layout(location = 0) in vec3 vp;\n"
-        "layout(location = 1) in vec3 normal;\n"
-        "uniform mat4 modelMatrix;\n"
-        "void main() {\n"
-        "    gl_Position = modelMatrix * vec4(vp, 1.0);\n"
-        "}";
-
-    const char* fragment_shader =
-        "#version 330\n"
-        "out vec4 frag_colour;"
-        "void main () {"
-        "     frag_colour = vec4(0.5, 0.0, 0.5, 1.0);"
-        "}";
-
-	const char* fragment_shader_quad =
-		"#version 330\n"
-		"out vec4 frag_colour;"
-		"void main () {"
-		"     frag_colour = vec4(1.0, 1.0, 0.0, 1.0);"
-		"}";
-
-    GLuint vertexShader = loadShader(vertex_shader, GL_VERTEX_SHADER);
-	GLuint fragmentShader = isQuad ? loadShader(fragment_shader_quad, GL_FRAGMENT_SHADER) : loadShader(fragment_shader, GL_FRAGMENT_SHADER);
-
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    GLint status;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE) {
-        std::cerr << "Failed to link shader program\n";
-    }
-}
-
+// Activates the main shader program.
 void Shader::use() {
     glUseProgram(shaderProgram);
 }
 
+// Activates the quad shader program.
+void Shader::use_quad() {
+    glUseProgram(shaderProgram_quad);
+}
+
+// Loads and compiles a shader from source code.
 GLuint Shader::loadShader(const char* source, GLenum shaderType) {
     GLuint shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &source, nullptr);
     glCompileShader(shader);
+
+    GLint success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
     return shader;
 }
 
+// Returns the ID of the main shader program.
 GLuint Shader::getProgramID() {
-    return shaderProgram;  
+    return shaderProgram;
 }
 
+// Returns the ID of the quad shader program.
+GLuint Shader::getProgramID_quad() {
+    return shaderProgram_quad;
+}

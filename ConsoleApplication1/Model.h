@@ -2,26 +2,24 @@
 #define MODEL_H
 
 #include <GL/glew.h>
-#include "Models/tree.h"
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include "DrawableObject.h"
+#include "ShaderProgram.h"
+#include <vector>
 
-
-class Model {
+class Model : public DrawableObject {
 public:
-    Model();
+    Model(ShaderProgram* shader);
     ~Model();
 
-    void createTriangle();
-    void createRectangle();
-	void createTree();
+    void load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
+    void draw();
 
-    void renderTriangle();
-    void renderRectangle();
-	void renderTree();
-    
 private:
-    GLuint VAO_triangle, VBO_triangle;
-    GLuint VAO_rectangle, VBO_rectangle;
-	GLuint VAO_tree, VBO_tree;
+    GLuint vao, vbo, ebo;
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
 };
 
-#endif
+#endif // MODEL_H

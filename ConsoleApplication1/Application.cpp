@@ -1,177 +1,170 @@
+// Application.cpp
 #include "Application.h"
+#include "Triangle.h"
+#include "Rectangle.h"
+#include "Tree.h"
+#include "Bush.h"
 #include <iostream>
+#include <random>
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-int Application::current_scene = 0;
+// Define shader sources
+const char* vertexShaderSource1 =
+"#version 330\n"
+"layout(location=0) in vec3 vp;\n"
+"layout(location=1) in vec3 normal;\n"
+"out vec3 fragNormal;\n"
+"uniform mat4 modelMatrix;\n"
+"void main () {\n"
+"     gl_Position = modelMatrix * vec4(vp, 1.0);\n"
+"     fragNormal = normal;\n"
+"}";
 
-std::vector<glm::mat4> treeTransforms;
-Model* treeModel;
+const char* fragmentShaderSource1 =
+"#version 330\n"
+"in vec3 fragNormal;\n"
+"out vec4 frag_colour;\n"
+"void main () {\n"
+"     vec3 color = fragNormal * 0.5 + 0.5;\n"
+"     frag_colour = vec4(color, 1.0);\n"
+"}";
 
-// Constructor
-Application::Application() {
-	if (!glfwInit()) {
-		std::cerr << "ERROR: could not start GLFW3\n";
-		exit(EXIT_FAILURE);
+const char* vertexShaderSource2 = vertexShaderSource1;
+const char* fragmentShaderSource2 = fragmentShaderSource1;
+
+const char* vertexShaderSource = vertexShaderSource1;
+const char* fragmentShaderSource = fragmentShaderSource1;
+
+// Define vertex arrays
+float triangleVertices[] = {
+    -0.3f,  0.8f, 0.0f,  0.3f,  0.5f, 0.0f,
+    -0.4f, 0.5f, 0.0f,  0.3f, 0.5f, 0.0f,
+    0.1f, 0.6f, 0.0f, 0.9f, 0.5f, 0.0f
+};
+
+float rectangleVertices[] = {
+    -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f,
+    -0.5f, 0.5f, 0.0f, -0.5f, 0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f,
+};
+
+Application::Application() : window(nullptr), currentScene(nullptr), primitiveScene(nullptr), forestScene(nullptr) {
+    if (!glfwInit()) {
+        std::cerr << "ERROR: could not start GLFW3\n";
+        exit(EXIT_FAILURE);
+    }
+    window = glfwCreateWindow(800, 600, "ZPG", nullptr, nullptr);
+    if (!window) {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glfwMakeContextCurrent(window);
+
+    // Initialize GLEW
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+
+    primitiveScene = new Scene();
+    forestScene = new Scene();
+
+    // Initialize primitive scene
+    ShaderProgram* shader1 = new ShaderProgram();
+    shader1->create(vertexShaderSource1, fragmentShaderSource1);
+    ShaderProgram* shader2 = new ShaderProgram();
+    shader2->create(vertexShaderSource2, fragmentShaderSource2);
+
+    Triangle* triangle = new Triangle(shader1, triangleVertices, sizeof(triangleVertices));
+    Rectangle* rectangle = new Rectangle(shader2, rectangleVertices, sizeof(rectangleVertices));
+
+   /* glm::vec3 rotationAxis(0.0f, 0.0f, 1.0f);
+    glm::vec3 scaleVec(1.0f, 1.0f, 1.0f);*/
+
+    // Apply transformations to the triangle
+    /*triangle->transformation.translate((0.0f, 0.0f, 0.0f));
+    triangle->transformation.rotate(45.0f, rotationAxis);
+    triangle->transformation.scale(scaleVec);*/
+
+    primitiveScene->addObject(triangle);
+    primitiveScene->addObject(rectangle);
+
+    // Initialize forest scene
+    ShaderProgram* treeShader = new ShaderProgram();
+    treeShader->create(vertexShaderSource, fragmentShaderSource);
+    ShaderProgram* bushShader = new ShaderProgram();
+    bushShader->create(vertexShaderSource, fragmentShaderSource);
+
+	for (int i = 0; i < 5; i++)
+	{
+        Tree* tree = new Tree(treeShader);
+        glm::vec3 treePosition = glm::vec3((float)(rand() % 100) / 100.0f - 0.8f, (float)(rand() % 100) / 100.0f - 0.8f, 0.0f);
+        glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
+        glm::vec3 treeRotate = glm::vec3(0.f, 0.8f, 0.f);
+       float randomRotation = static_cast<float>(rand() % 360);
+
+        tree->translate(treePosition);
+        tree->scale(treeScale);
+        tree->rotate(randomRotation, treeRotate);
+
+        forestScene->addObject(tree);
 	}
 
-	window = glfwCreateWindow(800, 600, "ZPG", nullptr, nullptr);
+    for (int i = 0; i < 3; i++)
+    {
+        Bush* bush = new Bush(bushShader);
+        glm::vec3 bushPosition = glm::vec3((float)(rand() % 100) / 100.0f - 0.5f, (float)(rand() % 100) / 100.0f - 0.5f, 0.0f);
+		glm::vec3 bushScale = glm::vec3(0.3f + (float)(rand() % 100) / 100.0f);
+        glm::vec3 bushRotate = glm::vec3(0.f, 0.8f, 0.f);
+        float randomRotation = static_cast<float>(rand() % 360);
 
-	if (!window) {
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
+        bush->translate(bushPosition);
+		bush->scale(bushScale);
+		bush->rotate(randomRotation, bushRotate);
+        forestScene->addObject(bush);
+    }
 
-	glfwMakeContextCurrent(window);
+    currentScene = primitiveScene;
 }
 
-// Destructor
 Application::~Application() {
-	glfwDestroyWindow(window);
-	glfwTerminate();
+    delete primitiveScene;
+    delete forestScene;
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
-// Initialization
-void Application::initialization() {
-	glfwSetErrorCallback(errorCallbacks);
-	glfwSetKeyCallback(window, keyCallbacks);
-	glfwSetWindowFocusCallback(window, window_focus_callback);
-	glfwSetWindowSizeCallback(window, window_size_callback);
-	glfwSetCursorPosCallback(window, cursor_callback);
-	glfwSetMouseButtonCallback(window, button_callback);
-
-	glewExperimental = GL_TRUE;
-	glewInit();
-	glEnable(GL_DEPTH_TEST);
-	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-
-}
-
-// Create shaders
-void Application::createShaders() {
-	triangleShader = new Shader();
-	quadShader = new Shader();
-
-	triangleShader->createShaderPrograms(false);
-	quadShader->createShaderPrograms(true);
-}
-
-// Create models
-void Application::createModels() {
-	model = new Model();
-	model->createTriangle();
-	model->createRectangle();
-
-	treeModel = new Model();
-	treeModel->createTree();
-}
-
-void Application::createTrees(int numTrees)
-{
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> posDist(-5.0f, 5.0f);
-	std::uniform_real_distribution<float> scaleDist(0.5f, 2.0f);
-	std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
-
-	for (int i = 0; i < numTrees; ++i) {
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::translate(transform, glm::vec3(posDist(gen), 0.0f, posDist(gen)));
-		transform = glm::rotate(transform, rotDist(gen), glm::vec3(0.0f, 1.0f, 0.0f));
-		transform = glm::scale(transform, glm::vec3(scaleDist(gen)));
-		treeTransforms.push_back(transform);
-	}
-}
-
-// Run application
 void Application::run() {
-	while (!glfwWindowShouldClose(window)) {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-
-
-		if (current_scene == 0)
-		{
-			// triangle
-			triangleShader->use();
-
-			glm::mat4 M1 = glm::mat4(1.0f);
-			M1 = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-			M1 = glm::translate(M1, glm::vec3(-0.5f, 0.0f, 0.0f));
-
-			GLint idModelTransform = glGetUniformLocation(triangleShader->getProgramID(), "modelMatrix");
-			glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M1[0][0]);
-
-			model->renderTriangle();
-
-			// quad
-			quadShader->use();
-
-			glm::mat4 M2 = glm::mat4(1.0f);
-			M2 = glm::translate(M2, glm::vec3(0.5f, 0.0f, 0.0f));
-
-			idModelTransform = glGetUniformLocation(quadShader->getProgramID(), "modelMatrix");
-			glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M2[0][0]);
-
-			model->renderRectangle();
-
-
-		}
-		else if (current_scene == 1)
-		{
-			quadShader->use();
-			GLint idModelTransform = glGetUniformLocation(quadShader->getProgramID(), "modelMatrix");
-
-			for (const auto& transform : treeTransforms) {
-				glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &transform[0][0]);
-				treeModel->renderTree();
-			}
-		}
-
-
-		glfwPollEvents();
-		glfwSwapBuffers(window);
-	}
+    mainLoop();
 }
 
-// Callbacks
-void Application::errorCallbacks(int error, const char* description) {
-	fputs(description, stderr);
+void Application::mainLoop() {
+    while (!glfwWindowShouldClose(window)) {
+        processInput(window);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        currentScene->draw();
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 }
 
-void Application::keyCallbacks(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
+void Application::processInput(GLFWwindow* glfwWindow) {
+    if (glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(glfwWindow, true);
 
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-	{
-		current_scene = 0;
-		printf("Scene 1\n");
-	}
+    if (glfwGetKey(glfwWindow, GLFW_KEY_1) == GLFW_PRESS)
+        currentScene = primitiveScene;
 
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-	{
-		current_scene = 1;
-		printf("Scene 2\n");
-	}
-}
-
-void Application::window_focus_callback(GLFWwindow* window, int focused) {
-	printf("window_focus_callback \n");
-}
-
-void Application::window_iconify_callback(GLFWwindow* window, int iconified) {
-	printf("window_iconify_callback \n");
-}
-
-void Application::window_size_callback(GLFWwindow* window, int width, int height) {
-	printf("resize %d, %d \n", width, height);
-	glViewport(0, 0, width, height);
-}
-
-void Application::cursor_callback(GLFWwindow* window, double x, double y) {
-	printf("cursor_callback \n");
-}
-
-void Application::button_callback(GLFWwindow* window, int button, int action, int mode) {
-	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
+    if (glfwGetKey(glfwWindow, GLFW_KEY_2) == GLFW_PRESS)
+        currentScene = forestScene;
 }
