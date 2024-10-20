@@ -2,9 +2,10 @@
 #define SCENE_H
 
 #include <GL/glew.h>
-#include "DrawableObject.h"
+#include <GLFW/glfw3.h>
 #include <vector>
-#include <tuple>
+#include "DrawableObject.h"
+#include <glm/glm.hpp>
 
 class Scene {
 public:
@@ -12,7 +13,8 @@ public:
     ~Scene();
 
     void addObject(DrawableObject* object);
-    void draw();
+    void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+   
 
 private:
     std::vector<DrawableObject*> objects;

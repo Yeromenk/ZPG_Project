@@ -13,11 +13,11 @@ public:
     DrawableObject(ShaderProgram* shader);
     virtual ~DrawableObject() = default;
 
-    void translate( glm::vec3& translation);
-    void rotate(float angle,  glm::vec3& axis);
-    void scale( glm::vec3& scaling);
+    void translate(glm::vec3& translation);
+    void rotate(float angle, glm::vec3& axis);
+    void scale(glm::vec3& scaling);
 
-    virtual void draw() = 0;
+    virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
 
 protected:
 

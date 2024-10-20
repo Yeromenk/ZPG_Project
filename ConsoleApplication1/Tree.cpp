@@ -19,11 +19,13 @@ Tree::Tree(ShaderProgram* shader) : DrawableObject(shader) {
     glBindVertexArray(0);
 }
 
-void Tree::draw() {
+void Tree::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
     shader->use();
+    shader->setMat4("viewMatrix", viewMatrix);
+    shader->setMat4("projectionMatrix", projectionMatrix);
     transformation.apply(shader);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 92814); // Adjust the number of vertices as needed
+    glDrawArrays(GL_TRIANGLES, 0, 92814); 
     glBindVertexArray(0);
 }

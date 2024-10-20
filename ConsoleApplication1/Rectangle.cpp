@@ -19,11 +19,13 @@ Rectangle::Rectangle(ShaderProgram* shader, float* vertices, size_t size) : Draw
     glBindVertexArray(0);
 }
 
-void Rectangle::draw() {
+void Rectangle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
     shader->use();
+    shader->setMat4("viewMatrix", viewMatrix);
+    shader->setMat4("projectionMatrix", projectionMatrix);
     transformation.apply(shader);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 6); // Adjust the number of vertices as needed
+    glDrawArrays(GL_TRIANGLES, 0, 6); 
     glBindVertexArray(0);
 }

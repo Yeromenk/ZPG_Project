@@ -1,7 +1,8 @@
 #include "ShaderProgram.h"
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
-ShaderProgram::ShaderProgram() : programID(0) {}
+ShaderProgram::ShaderProgram(Camera*) : programID(0) {}
 
 ShaderProgram::~ShaderProgram() {
     glDeleteProgram(programID);
@@ -50,4 +51,12 @@ GLuint ShaderProgram::loadShader(const char* source, GLenum shaderType) {
     }
 
     return shader;
+}
+
+GLuint ShaderProgram::getProgramID() const {
+	return programID;
+}
+
+void ShaderProgram::setMat4(const std::string& name, const glm::mat4& mat) const {
+    glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }

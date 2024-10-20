@@ -13,8 +13,8 @@
 
 int main(void) {
     Application* app = new Application();
-    app->run();  // Launch application
+    app->run();  
 
-    delete app;  // Release of resources
+    delete app;  
     return 0;
 }

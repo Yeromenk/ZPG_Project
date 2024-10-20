@@ -2,7 +2,10 @@
 #include <iostream>
 
 // Constructor: Initializes shader program IDs to 0.
-Shader::Shader() : shaderProgram(0), shaderProgram_quad(0) {}
+Shader::Shader(Camera* camera) : shaderProgram(0), shaderProgram_quad(0)
+{
+	this->camera = camera;
+}
 
 // Destructor: Deletes the shader programs.
 Shader::~Shader() {

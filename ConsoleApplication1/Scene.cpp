@@ -12,8 +12,9 @@ void Scene::addObject(DrawableObject* object) {
     objects.push_back(object);
 }
 
-void Scene::draw() {
-    for (auto object : objects) {
-        object->draw();
+void Scene::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
+    for (auto& object : objects) {
+        object->draw(viewMatrix, projectionMatrix);
     }
 }
+

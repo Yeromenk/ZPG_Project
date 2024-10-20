@@ -1,4 +1,3 @@
-// Triangle.cpp
 #include "Triangle.h"
 
 Triangle::Triangle(ShaderProgram* shader, float* vertices, size_t size) : DrawableObject(shader) {
@@ -20,11 +19,13 @@ Triangle::Triangle(ShaderProgram* shader, float* vertices, size_t size) : Drawab
     glBindVertexArray(0);
 }
 
-void Triangle::draw() {
+void Triangle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
     shader->use();
-    transformation.apply(shader); // Apply transformation
+    shader->setMat4("viewMatrix", viewMatrix);
+    shader->setMat4("projectionMatrix", projectionMatrix);
+    transformation.apply(shader);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3); // Adjust the number of vertices as needed
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 }
