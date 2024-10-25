@@ -22,9 +22,6 @@ public:
 	void setMat4(const std::string& name, const glm::mat4& mat) const;
     void update(const char* message) override;
 
-   /* GLint getUniformLocation(const std::string& name);
-    GLuint getProgramID() const;*/
-
 private:
 	Camera* camera;
     GLuint programID;

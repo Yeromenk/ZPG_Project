@@ -1,37 +1,4 @@
 #include "Application.h"
-#include "ShaderLoader.h"
-#include "Triangle.h"
-#include "Rectangle.h"
-#include "Tree.h"
-#include "Bush.h"
-
-//const char* vertexShaderSource1 =
-//"#version 330\n"
-//"layout(location=0) in vec3 vp;\n"
-//"layout(location=1) in vec3 normal;\n"
-//"out vec3 fragNormal;\n"
-//"uniform mat4 modelMatrix;\n"
-//"uniform mat4 viewMatrix;\n"
-//"uniform mat4 projectionMatrix;\n"
-//"void main () {\n"
-//"     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);\n"
-//"     fragNormal = normal;\n"
-//"}";
-//
-//const char* fragmentShaderSource1 =
-//"#version 330\n"
-//"in vec3 fragNormal;\n"
-//"out vec4 frag_colour;\n"
-//"void main () {\n"
-//"     vec3 color = fragNormal * 0.5 + 0.5;\n"
-//"     frag_colour = vec4(color, 1.0);\n"
-//"}";
-//
-//const char* vertexShaderSource2 = vertexShaderSource1;
-//const char* fragmentShaderSource2 = fragmentShaderSource1;
-//
-//const char* vertexShaderSource = vertexShaderSource1;
-//const char* fragmentShaderSource = fragmentShaderSource1;
 
 // Define vertex arrays
 float triangleVertices[] = {
@@ -71,6 +38,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 
     camera = new Camera(0.0f, 0.0f, 3.0f, 0.0f, 1.0f, 0.0f);
+	cameraController = new CameraController(camera);
 
     primitiveScene = new Scene();
     forestScene = new Scene();
@@ -125,6 +93,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
 Application::~Application() {
     delete camera;
+    delete cameraController;
     delete primitiveScene;
     delete forestScene;
     glfwDestroyWindow(window);
@@ -150,12 +119,12 @@ void Application::mainLoop() {
         lastX = xpos;
         lastY = ypos;
 
-        camera->processMouseMovement(xoffset, yoffset);
+        cameraController->processMouseMovement(xoffset, yoffset);
 
-        glm::mat4 viewMatrix = camera->getViewMatrix();
-        glm::mat4 projectionMatrix = camera->getProjectionMatrix(800.0f / 600.0f);
+      /*  glm::mat4 viewMatrix = camera->getViewMatrix();
+        glm::mat4 projectionMatrix = camera->getProjectionMatrix(800.0f / 600.0f);*/
 
-        currentScene->draw(viewMatrix, projectionMatrix);
+        currentScene->draw(camera);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -181,7 +150,9 @@ void Application::processInput(GLFWwindow* glfwWindow) {
         std::cout << "Scene 2" << std::endl;
     }
 
-    if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS) {
+	cameraController->processInput(glfwWindow, deltaTime);
+
+   /* if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS) {
         camera->move_forward(deltaTime);
     }
     if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS) {
@@ -192,5 +163,5 @@ void Application::processInput(GLFWwindow* glfwWindow) {
     }
     if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS) {
         camera->move_right(deltaTime);
-    }
+    }*/
 }

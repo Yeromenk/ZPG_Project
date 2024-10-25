@@ -13,8 +13,8 @@ public:
     ~Scene();
 
     void addObject(DrawableObject* object);
-    void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
-   
+   // void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+    void draw(Camera* camera);
 
 private:
     std::vector<DrawableObject*> objects;

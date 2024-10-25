@@ -1,6 +1,5 @@
 #include "Camera.h"
-#include <iostream>
-#include <GLFW/glfw3.h>
+
 
 Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ)
     : position(glm::vec3(posX, posY, posZ)), up(glm::vec3(upX, upY, upZ)), yaw(-90.0f), pitch(0.0f), speed(2.5f) {
