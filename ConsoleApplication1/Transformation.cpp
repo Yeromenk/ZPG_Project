@@ -20,7 +20,5 @@ void Transformation::scale( glm::vec3& scale) {
 }
 
 void Transformation::apply(ShaderProgram* shader) const {
-    GLint modelLoc = shader->getUniformLocation("modelMatrix");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
+    shader->setMat4("modelMatrix", modelMatrix);
 }

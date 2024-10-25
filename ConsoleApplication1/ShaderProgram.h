@@ -6,22 +6,29 @@
 #include <string>
 #include <glm/fwd.hpp>
 
+#include "Observer.h"
+#include "Camera.h"
+#include "ShaderLoader.h"
+
 class Camera;
 
-class ShaderProgram {
+class ShaderProgram : public Observer {
 public:
     ShaderProgram(Camera* camera);
     ~ShaderProgram();
 
-    void create(const char* vertexSource, const char* fragmentSource);
+    void create(const char* vertexFile, const char* fragmentFile);
     void use();
 	void setMat4(const std::string& name, const glm::mat4& mat) const;
-    GLint getUniformLocation(const std::string& name);
-    GLuint getProgramID() const;
+    void update(const char* message) override;
+
+   /* GLint getUniformLocation(const std::string& name);
+    GLuint getProgramID() const;*/
 
 private:
+	Camera* camera;
     GLuint programID;
-    GLuint loadShader(const char* source, GLenum shaderType);
+	ShaderLoader shaderLoader;
 };
 
 #endif // SHADERPROGRAM_H

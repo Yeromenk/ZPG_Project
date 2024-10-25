@@ -4,9 +4,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Subject.h"
+
 class Shader; // Forward declaration
 
-class Camera {
+class Camera : public Subject{
 public:
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ);
 

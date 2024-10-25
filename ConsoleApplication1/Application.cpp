@@ -1,36 +1,37 @@
 #include "Application.h"
+#include "ShaderLoader.h"
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "Tree.h"
 #include "Bush.h"
 
-const char* vertexShaderSource1 =
-"#version 330\n"
-"layout(location=0) in vec3 vp;\n"
-"layout(location=1) in vec3 normal;\n"
-"out vec3 fragNormal;\n"
-"uniform mat4 modelMatrix;\n"
-"uniform mat4 viewMatrix;\n"
-"uniform mat4 projectionMatrix;\n"
-"void main () {\n"
-"     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);\n"
-"     fragNormal = normal;\n"
-"}";
-
-const char* fragmentShaderSource1 =
-"#version 330\n"
-"in vec3 fragNormal;\n"
-"out vec4 frag_colour;\n"
-"void main () {\n"
-"     vec3 color = fragNormal * 0.5 + 0.5;\n"
-"     frag_colour = vec4(color, 1.0);\n"
-"}";
-
-const char* vertexShaderSource2 = vertexShaderSource1;
-const char* fragmentShaderSource2 = fragmentShaderSource1;
-
-const char* vertexShaderSource = vertexShaderSource1;
-const char* fragmentShaderSource = fragmentShaderSource1;
+//const char* vertexShaderSource1 =
+//"#version 330\n"
+//"layout(location=0) in vec3 vp;\n"
+//"layout(location=1) in vec3 normal;\n"
+//"out vec3 fragNormal;\n"
+//"uniform mat4 modelMatrix;\n"
+//"uniform mat4 viewMatrix;\n"
+//"uniform mat4 projectionMatrix;\n"
+//"void main () {\n"
+//"     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);\n"
+//"     fragNormal = normal;\n"
+//"}";
+//
+//const char* fragmentShaderSource1 =
+//"#version 330\n"
+//"in vec3 fragNormal;\n"
+//"out vec4 frag_colour;\n"
+//"void main () {\n"
+//"     vec3 color = fragNormal * 0.5 + 0.5;\n"
+//"     frag_colour = vec4(color, 1.0);\n"
+//"}";
+//
+//const char* vertexShaderSource2 = vertexShaderSource1;
+//const char* fragmentShaderSource2 = fragmentShaderSource1;
+//
+//const char* vertexShaderSource = vertexShaderSource1;
+//const char* fragmentShaderSource = fragmentShaderSource1;
 
 // Define vertex arrays
 float triangleVertices[] = {
@@ -76,9 +77,9 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
     // Initialize primitive scene
     ShaderProgram* shader1 = new ShaderProgram(camera);
-    shader1->create(vertexShaderSource1, fragmentShaderSource1);
+    shader1->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
     ShaderProgram* shader2 = new ShaderProgram(camera);
-    shader2->create(vertexShaderSource2, fragmentShaderSource2);
+    shader2->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
 
     Triangle* triangle = new Triangle(shader1, triangleVertices, sizeof(triangleVertices));
     Rectangle* rectangle = new Rectangle(shader2, rectangleVertices, sizeof(rectangleVertices));
@@ -87,9 +88,9 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     primitiveScene->addObject(rectangle);
 
     ShaderProgram* treeShader = new ShaderProgram(camera);
-    treeShader->create(vertexShaderSource, fragmentShaderSource);
+    treeShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
     ShaderProgram* bushShader = new ShaderProgram(camera);
-    bushShader->create(vertexShaderSource, fragmentShaderSource);
+    bushShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
 
     for (int i = 0; i < 5; i++) {
         Tree* tree = new Tree(treeShader);
@@ -104,7 +105,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
         forestScene->addObject(tree);
     }
-
+    
     for (int i = 0; i < 3; i++) {
         Bush* bush = new Bush(bushShader);
         glm::vec3 bushPosition = glm::vec3((float)(rand() % 200) / 100.0f - 1.0f, (float)(rand() % 200) / 100.0f - 1.0f, 0.0f);

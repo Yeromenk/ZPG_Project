@@ -21,6 +21,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
     updateCameraVectors();
+    notify("camera");
 }
 
 void Camera::updateCameraVectors() {
@@ -33,16 +34,20 @@ void Camera::updateCameraVectors() {
 
 void Camera::move_forward(float deltaTime) {
     position += front * speed * deltaTime;
+	notify("camera");
 }
 
 void Camera::move_backward(float deltaTime) {
     position -= front * speed * deltaTime;
+    notify("camera");
 }
 
 void Camera::move_left(float deltaTime) {
     position -= glm::normalize(glm::cross(front, up)) * speed * deltaTime;
+    notify("camera");
 }
 
 void Camera::move_right(float deltaTime) {
     position += glm::normalize(glm::cross(front, up)) * speed * deltaTime;
+    notify("camera");
 }
