@@ -23,7 +23,7 @@ void Triangle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
     shader->use();
     shader->setMat4("viewMatrix", viewMatrix);
     shader->setMat4("projectionMatrix", projectionMatrix);
-    transformation.apply(shader);
+   // transformation.apply(shader);
 
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);

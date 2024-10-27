@@ -1,25 +1,22 @@
-#ifndef MODEL_H
-#define MODEL_H
-
+#pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "DrawableObject.h"
 #include "ShaderProgram.h"
-#include <vector>
 
 class Model : public DrawableObject {
-public:
-    Model(ShaderProgram* shader);
-    ~Model();
-
-    void load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
-    void draw();
-
 private:
-    GLuint vao, vbo, ebo;
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
-};
+    GLuint VBO;
+    GLuint VAO;
+    int drawMode;
+    int vertexCount;
+    DrawableObject* object;
 
-#endif // MODEL_H
+public:
+    Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode);
+
+    void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
+};

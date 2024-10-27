@@ -1,42 +1,36 @@
 #include "Model.h"
 
+Model::Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode)
+    : DrawableObject(shaderProgram), drawMode(drawMode), vertexCount(vertexCount) {
 
-Model::Model(ShaderProgram* shader) : DrawableObject(shader), vao(0), vbo(0), ebo(0) {}
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
 
-Model::~Model() {
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
-}
+    glBindVertexArray(VAO);
 
-void Model::load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
-    this->vertices = vertices;
-    this->indices = indices;
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, arraySize, points, GL_STATIC_DRAW);
 
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // Настройка атрибутов вершин
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // Отвязываем VAO
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Model::draw() {
+void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
     shader->use();
-    transformation.apply(shader);
+   // shader->setMat4("model", modelMatrix);
+    shader->setMat4("viewMatrix", viewMatrix);
+    shader->setMat4("projectionMatrix", projectionMatrix);
+    applyTransformations(shader);
 
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(VAO);
+    glDrawArrays(drawMode, 0, vertexCount);
     glBindVertexArray(0);
 }

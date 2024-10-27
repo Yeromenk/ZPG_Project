@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "Model.h"
+
 // Define vertex arrays
 float triangleVertices[] = {
     -0.3f,  0.8f, 0.0f,  0.3f,  0.5f, 0.0f,
@@ -38,7 +40,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 
     camera = new Camera(0.0f, 0.0f, 3.0f, 0.0f, 1.0f, 0.0f);
-	cameraController = new CameraController(camera);
+    cameraController = new CameraController(camera);
 
     primitiveScene = new Scene();
     forestScene = new Scene();
@@ -49,42 +51,59 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     ShaderProgram* shader2 = new ShaderProgram(camera);
     shader2->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
 
-    Triangle* triangle = new Triangle(shader1, triangleVertices, sizeof(triangleVertices));
-    Rectangle* rectangle = new Rectangle(shader2, rectangleVertices, sizeof(rectangleVertices));
+	Model* triangleModel = new Model(shader1, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES);
+	Model* rectangleModel = new Model(shader2, rectangleVertices, sizeof(rectangleVertices), 6, GL_TRIANGLES);
 
-    primitiveScene->addObject(triangle);
-    primitiveScene->addObject(rectangle);
+    primitiveScene->addObject(triangleModel);
+	primitiveScene->addObject(rectangleModel);
 
-    ShaderProgram* treeShader = new ShaderProgram(camera);
-    treeShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
-    ShaderProgram* bushShader = new ShaderProgram(camera);
-    bushShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
+	/*Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES);
+	forestScene->addObject(plainModel);*/
 
     for (int i = 0; i < 5; i++) {
-        Tree* tree = new Tree(treeShader);
-        glm::vec3 treePosition = glm::vec3((float)(rand() % 200) / 100.0f - 1.0f, (float)(rand() % 200) / 100.0f - 1.0f, 0.0f);
+        Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES);
+
+        // Random x position between -1.0 and 1.0
+        float randomX = (float)(rand() % 200) / 100.0f - 1.0f;
+
+        // Ground level y position
+        float groundY = 0.0f;
+
+        // Random z position between -1.0 and 1.0
+        float randomZ = (float)(rand() % 200) / 100.0f - 1.0f;
+
+        glm::vec3 treePosition = glm::vec3(randomX, groundY, randomZ);
         glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
         glm::vec3 treeRotate = glm::vec3(0.f, 0.8f, 0.f);
         float randomRotation = static_cast<float>(rand() % 360);
 
-        tree->translate(treePosition);
-        tree->scale(treeScale);
-        tree->rotate(randomRotation, treeRotate);
-
-        forestScene->addObject(tree);
+        treeModel->translate(treePosition);
+        treeModel->scale(treeScale);
+        treeModel->rotate(randomRotation, treeRotate);
+        forestScene->addObject(treeModel);
     }
-    
+
     for (int i = 0; i < 3; i++) {
-        Bush* bush = new Bush(bushShader);
-        glm::vec3 bushPosition = glm::vec3((float)(rand() % 200) / 100.0f - 1.0f, (float)(rand() % 200) / 100.0f - 1.0f, 0.0f);
-        glm::vec3 bushScale = glm::vec3(0.3f + (float)(rand() % 100) / 100.0f);
-        glm::vec3 bushRotate = glm::vec3(0.f, 0.8f, 0.f);
+        Model* bushModel = new Model(shader1, bushes, sizeof(bushes), 92814, GL_TRIANGLES);
+
+        // Random x position between -1.0 and 1.0
+        float randomX = (float)(rand() % 200) / 100.0f - 1.0f;
+
+        // Ground level y position
+        float groundY = 0.0f;
+
+        // Random z position between -1.0 and 1.0
+        float randomZ = (float)(rand() % 200) / 100.0f - 1.0f;
+
+        glm::vec3 treePosition = glm::vec3(randomX, groundY, randomZ);
+        glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
+        glm::vec3 treeRotate = glm::vec3(0.f, 0.8f, 0.f);
         float randomRotation = static_cast<float>(rand() % 360);
 
-        bush->translate(bushPosition);
-        bush->scale(bushScale);
-        bush->rotate(randomRotation, bushRotate);
-        forestScene->addObject(bush);
+        bushModel->translate(treePosition);
+        bushModel->scale(treeScale);
+        bushModel->rotate(randomRotation, treeRotate);
+        forestScene->addObject(bushModel);
     }
 
 
@@ -115,15 +134,11 @@ void Application::mainLoop() {
         glfwGetCursorPos(window, &xpos, &ypos);
         static double lastX = xpos, lastY = ypos;
         float xoffset = static_cast<float>(xpos - lastX);
-        float yoffset = static_cast<float>(lastY - ypos); 
+        float yoffset = static_cast<float>(lastY - ypos);
         lastX = xpos;
         lastY = ypos;
 
         cameraController->processMouseMovement(xoffset, yoffset);
-
-      /*  glm::mat4 viewMatrix = camera->getViewMatrix();
-        glm::mat4 projectionMatrix = camera->getProjectionMatrix(800.0f / 600.0f);*/
-
         currentScene->draw(camera);
 
         glfwSwapBuffers(window);
@@ -150,18 +165,6 @@ void Application::processInput(GLFWwindow* glfwWindow) {
         std::cout << "Scene 2" << std::endl;
     }
 
-	cameraController->processInput(glfwWindow, deltaTime);
+    cameraController->processInput(glfwWindow, deltaTime);
 
-   /* if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS) {
-        camera->move_forward(deltaTime);
-    }
-    if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS) {
-        camera->move_backward(deltaTime);
-    }
-    if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS) {
-        camera->move_left(deltaTime);
-    }
-    if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS) {
-        camera->move_right(deltaTime);
-    }*/
 }

@@ -15,13 +15,7 @@
 class Transformation {
 public:
     glm::mat4 modelMatrix;
-
     Transformation();
-
-    void translate( glm::vec3& translation);
-    void rotate(float angle,  glm::vec3& axis);
-    void scale( glm::vec3& scale);
-    void apply(ShaderProgram* shader) const;
 };
 
 #endif 

@@ -7,6 +7,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
 #include "Transformation.h"
+#include "TransformationApply.h"
+#include "TransformationRotate.h"
+#include "TransformationTranslate.h"
+#include "TransformationScale.h"
 
 class DrawableObject {
 public:
@@ -18,11 +22,12 @@ public:
     void scale(glm::vec3& scaling);
 
     virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
+	void applyTransformations(ShaderProgram* shaderProgram) const;
 
 protected:
-
     ShaderProgram* shader;
-    Transformation transformation;
+    TransformationApply transformationApply;
+    glm::mat4 modelMatrix;
 };
 
 #endif // DRAWABLEOBJECT_H

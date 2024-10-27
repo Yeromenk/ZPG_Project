@@ -8,7 +8,6 @@
 #include "Camera.h"
 #include <iostream>
 #include <random>
-#include "Application.h"
 #include "ShaderLoader.h"
 #include "Triangle.h"
 #include "Rectangle.h"
