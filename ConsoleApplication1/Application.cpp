@@ -57,8 +57,8 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     primitiveScene->addObject(triangleModel);
 	primitiveScene->addObject(rectangleModel);
 
-	/*Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES);
-	forestScene->addObject(plainModel);*/
+	Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES);
+	forestScene->addObject(plainModel);
 
     for (int i = 0; i < 5; i++) {
         Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES);

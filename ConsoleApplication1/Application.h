@@ -9,10 +9,9 @@
 #include <iostream>
 #include <random>
 #include "ShaderLoader.h"
-#include "Triangle.h"
-#include "Rectangle.h"
-#include "Tree.h"
-#include "Bush.h"
+#include "Models/tree.h"
+#include "Models/plain.h"
+#include "Models/bushes.h"
 #include "CameraController.h"
 
 
