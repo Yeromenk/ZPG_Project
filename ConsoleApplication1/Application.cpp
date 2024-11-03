@@ -59,11 +59,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
 	glm::vec3 treeSize = glm::vec3(2.0f);
 
+	glm::vec3 plainSize = glm::vec3(5.0f);
+
 	triangleModel->translate(treePosition);
 	triangleModel->scale(treeSize);
 
 	primitiveScene->addObject(triangleModel);
 
+	plainModel->scale(plainSize);
 	forestScene->addObject(plainModel);
 
 	glm::vec3 spherePositions[] = {
@@ -73,13 +76,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 		glm::vec3(1.0f, 0.0f, -1.0f)
 	};
 
-	glm::vec3 sphereScale = glm::vec3(0.5f);
+	glm::vec3 modelScale = glm::vec3(0.5f);
+	glm::vec3 giftScale = glm::vec3(2.0f);
 
 	// 3 scene
 	for (int i = 0; i < 4; i++) {
 		Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES);
 		sphereModel->translate(spherePositions[i]);
-		sphereModel->scale(sphereScale);
+		sphereModel->scale(modelScale);
 		sphereScene->addObject(sphereModel);
 	}
 
@@ -89,43 +93,39 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 		{
 			Model* giftModel = new Model(constantShader, gift, sizeof(gift), 66624, GL_TRIANGLES);
 			giftModel->translate(spherePositions[i]);
-			giftModel->scale(sphereScale);
+			giftModel->scale(giftScale);
 			lightScene->addObject(giftModel);
 		}
 		else if (i == 1)
 		{
 			Model* suziFlatModel = new Model(lambertShader, suziFlat, sizeof(suziFlat), 2904, GL_TRIANGLES);
 			suziFlatModel->translate(spherePositions[i]);
-			suziFlatModel->scale(sphereScale);
+			suziFlatModel->scale(modelScale);
 			lightScene->addObject(suziFlatModel);
 		}
 		else if (i == 2)
 		{
 			Model* suziSmoothModel = new Model(blinnShader, suziSmooth, sizeof(suziSmooth), 2904, GL_TRIANGLES);
 			suziSmoothModel->translate(spherePositions[i]);
-			suziSmoothModel->scale(sphereScale);
+			suziSmoothModel->scale(modelScale);
 			lightScene->addObject(suziSmoothModel);
 		}
 		else if (i == 3)
 		{
 			Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES);
 			sphereModel->translate(spherePositions[i]);
-			sphereModel->scale(sphereScale);
+			sphereModel->scale(modelScale);
 			lightScene->addObject(sphereModel);
 		}
 	}
 
-	for (int i = 0; i < 50; i++) {
+	// scene 2
+	for (int i = 0; i < 55; i++) {
 		Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES);
 
-		// Random x position between -1.0 and 1.0
-		float randomX = (float)(rand() % 200) / 100.0f - 1.0f;
-
-		// Ground level y position
+		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;
-
-		// Random z position between -1.0 and 1.0
-		float randomZ = (float)(rand() % 200) / 100.0f - 1.0f;
+		float randomZ = (float)(rand() % 1000) / 100.0f - 5.0f;
 
 		glm::vec3 treePosition = glm::vec3(randomX, groundY, randomZ);
 		glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
@@ -138,26 +138,21 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 		forestScene->addObject(treeModel);
 	}
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 55; i++) {
 		Model* bushModel = new Model(shader1, bushes, sizeof(bushes), 92814, GL_TRIANGLES);
 
-		// Random x position between -1.0 and 1.0
-		float randomX = (float)(rand() % 200) / 100.0f - 1.0f;
-
-		// Ground level y position
+		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;
+		float randomZ = (float)(rand() % 1000) / 100.0f - 5.0f;
 
-		// Random z position between -1.0 and 1.0
-		float randomZ = (float)(rand() % 200) / 100.0f - 1.0f;
-
-		glm::vec3 treePosition = glm::vec3(randomX, groundY, randomZ);
-		glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
-		glm::vec3 treeRotate = glm::vec3(0.f, 0.8f, 0.f);
+		glm::vec3 bushPosition = glm::vec3(randomX, groundY, randomZ);
+		glm::vec3 bushScale = glm::vec3(0.05f + (float)(rand() % 10) / 100.0f);
+		glm::vec3 bushRotate = glm::vec3(0.f, 0.8f, 0.f);
 		float randomRotation = static_cast<float>(rand() % 360);
 
-		bushModel->translate(treePosition);
-		bushModel->scale(treeScale);
-		bushModel->rotate(randomRotation, treeRotate);
+		bushModel->translate(bushPosition);
+		bushModel->scale(bushScale);
+		bushModel->rotate(randomRotation, bushRotate);
 		forestScene->addObject(bushModel);
 	}
 

@@ -12,9 +12,8 @@ public:
     ~Shader();
 
     void use();
-    void use_quad();
+    
     GLuint getProgramID();
-    GLuint getProgramID_quad();
 
 private:
     GLuint shaderProgram;
@@ -24,4 +23,4 @@ private:
     GLuint loadShader(const char* source, GLenum shaderType);
 };
 
-#endif // SHADER_H
+#endif 

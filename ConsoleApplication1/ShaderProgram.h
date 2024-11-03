@@ -5,6 +5,8 @@
 #include <GL/gl.h>
 #include <string>
 #include <glm/fwd.hpp>
+#include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Observer.h"
 #include "Camera.h"

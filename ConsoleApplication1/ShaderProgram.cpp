@@ -1,6 +1,5 @@
 #include "ShaderProgram.h"
-#include <iostream>
-#include <glm/gtc/type_ptr.hpp>
+
 
 ShaderProgram::ShaderProgram(Camera* camera, Light* light) : programID(0), camera(camera), light(light)
 {
