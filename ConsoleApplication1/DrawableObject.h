@@ -23,6 +23,8 @@ public:
 
     virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
 	void applyTransformations(ShaderProgram* shaderProgram) const;
+	ShaderProgram* getShaderProgram() const { return shader; }
+	glm::mat4 getModelMatrix() const { return modelMatrix; }
 
 protected:
     ShaderProgram* shader;

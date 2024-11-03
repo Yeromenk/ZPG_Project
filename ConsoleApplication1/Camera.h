@@ -8,7 +8,7 @@
 
 #include "Subject.h"
 
-class Shader; // Forward declaration
+class Shader; 
 
 class Camera : public Subject{
 public:
@@ -18,11 +18,12 @@ public:
     glm::mat4 getProjectionMatrix(float aspectRatio) const;
 
     void processMouseMovement(float xoffset, float yoffset);
-	void processKeyboardInput(int key, float deltaTime);
+	//void processKeyboardInput(int key, float deltaTime);
     void move_forward(float deltaTime);
 	void move_backward(float deltaTime);
 	void move_left(float deltaTime);
 	void move_right(float deltaTime);
+    glm::vec3 getPosition() const;
 
 private:
     glm::vec3 position;
@@ -31,7 +32,8 @@ private:
     float yaw;
     float pitch;
     float speed;
+
     void updateCameraVectors();
 };
 
-#endif // CAMERA_H
+#endif 

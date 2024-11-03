@@ -12,7 +12,13 @@
 #include "Models/tree.h"
 #include "Models/plain.h"
 #include "Models/bushes.h"
+#include "Models/sphere.h"
+#include "Models/gift.h"
+#include "Models/suzi_flat.h"
+#include "Models/suzi_smooth.h"
 #include "CameraController.h"
+#include "Light.h"
+#include "Model.h"
 
 
 class Application {
@@ -29,6 +35,8 @@ private:
     Scene* currentScene;
     Scene* primitiveScene;
     Scene* forestScene;
+    Scene* sphereScene;
+    Scene* lightScene;
 	Camera* camera;
     CameraController* cameraController;
 

@@ -50,3 +50,7 @@ void Camera::move_right(float deltaTime) {
     position += glm::normalize(glm::cross(front, up)) * speed * deltaTime;
     notify("camera");
 }
+
+glm::vec3 Camera::getPosition() const {
+	return position;
+}

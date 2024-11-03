@@ -10,6 +10,7 @@ private:
 
 public:
 	virtual void add_subject(Observer* subject);
+	virtual void remove_subject(Observer* subject);
 	virtual void notify(const char* message = nullptr);
 };
 

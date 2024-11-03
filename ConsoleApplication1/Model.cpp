@@ -11,21 +11,19 @@ Model::Model(ShaderProgram* shaderProgram, const float* points, int arraySize, i
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, arraySize, points, GL_STATIC_DRAW);
 
-    // Настройка атрибутов вершин
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-    // Отвязываем VAO
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
     shader->use();
-   // shader->setMat4("model", modelMatrix);
+    shader->setMat4("model", modelMatrix);
     shader->setMat4("viewMatrix", viewMatrix);
     shader->setMat4("projectionMatrix", projectionMatrix);
     applyTransformations(shader);

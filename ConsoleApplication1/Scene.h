@@ -7,17 +7,20 @@
 #include "DrawableObject.h"
 #include <glm/glm.hpp>
 
+#include "Light.h"
+
 class Scene {
 public:
     Scene();
     ~Scene();
 
     void addObject(DrawableObject* object);
-   // void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
     void draw(Camera* camera);
+    void setLight(Light* light);
 
 private:
     std::vector<DrawableObject*> objects;
+	Light* light;
 };
 
-#endif // SCENE_H
+#endif 
