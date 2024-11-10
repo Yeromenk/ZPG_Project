@@ -53,8 +53,8 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	ShaderProgram* blinnShader = new ShaderProgram(camera, light);
 	blinnShader->create("./Shaders/blinn_vertex_shader.glsl", "./Shaders/blinn_fragment_shader.glsl");
 
-	Model* triangleModel = new Model(shader1, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES);
-	Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES);
+	Model* triangleModel = new Model(shader1, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle");
+	Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES, "plain");
 
 	glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
 	glm::vec3 treeSize = glm::vec3(2.0f);
@@ -81,7 +81,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
 	// 3 scene
 	for (int i = 0; i < 4; i++) {
-		Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES);
+		Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere");
 		sphereModel->translate(spherePositions[i]);
 		sphereModel->scale(modelScale);
 		sphereScene->addObject(sphereModel);
@@ -91,28 +91,28 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	for (int i = 0; i < 4; i++) {
 		if (i == 0)
 		{
-			Model* giftModel = new Model(constantShader, gift, sizeof(gift), 66624, GL_TRIANGLES);
+			Model* giftModel = new Model(constantShader, gift, sizeof(gift), 66624, GL_TRIANGLES, "gift");
 			giftModel->translate(spherePositions[i]);
 			giftModel->scale(giftScale);
 			lightScene->addObject(giftModel);
 		}
 		else if (i == 1)
 		{
-			Model* suziFlatModel = new Model(lambertShader, suziFlat, sizeof(suziFlat), 2904, GL_TRIANGLES);
+			Model* suziFlatModel = new Model(lambertShader, suziFlat, sizeof(suziFlat), 2904, GL_TRIANGLES, "suziFlat");
 			suziFlatModel->translate(spherePositions[i]);
 			suziFlatModel->scale(modelScale);
 			lightScene->addObject(suziFlatModel);
 		}
 		else if (i == 2)
 		{
-			Model* suziSmoothModel = new Model(blinnShader, suziSmooth, sizeof(suziSmooth), 2904, GL_TRIANGLES);
+			Model* suziSmoothModel = new Model(blinnShader, suziSmooth, sizeof(suziSmooth), 2904, GL_TRIANGLES, "suziSmooth");
 			suziSmoothModel->translate(spherePositions[i]);
 			suziSmoothModel->scale(modelScale);
 			lightScene->addObject(suziSmoothModel);
 		}
 		else if (i == 3)
 		{
-			Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES);
+			Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere");
 			sphereModel->translate(spherePositions[i]);
 			sphereModel->scale(modelScale);
 			lightScene->addObject(sphereModel);
@@ -121,7 +121,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
 	// scene 2
 	for (int i = 0; i < 55; i++) {
-		Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES);
+		Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree");
 
 		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;
@@ -139,7 +139,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	}
 
 	for (int i = 0; i < 55; i++) {
-		Model* bushModel = new Model(shader1, bushes, sizeof(bushes), 92814, GL_TRIANGLES);
+		Model* bushModel = new Model(shader1, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush");
 
 		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;
@@ -224,6 +224,16 @@ void Application::processInput(GLFWwindow* glfwWindow) {
 	if (glfwGetKey(glfwWindow, GLFW_KEY_4) == GLFW_PRESS) {
 		currentScene = lightScene;
 		std::cout << "Scene 4" << std::endl;
+	}
+
+	if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {
+		forestScene->rotateTrees();
+		std::cout << "Rotate trees" << std::endl;
+	}
+
+	if (glfwGetKey(glfwWindow, GLFW_KEY_T) == GLFW_PRESS) {
+		forestScene->translateBushes(5.0f);
+		std::cout << "Translate bushes" << std::endl;
 	}
 
 	cameraController->processInput(glfwWindow, deltaTime);

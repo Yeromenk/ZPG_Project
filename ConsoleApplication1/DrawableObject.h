@@ -14,7 +14,7 @@
 
 class DrawableObject {
 public:
-    DrawableObject(ShaderProgram* shader);
+    DrawableObject(ShaderProgram* shader, const std::string& type);
     virtual ~DrawableObject() = default;
 
     void translate(glm::vec3& translation);
@@ -23,13 +23,16 @@ public:
 
     virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
 	void applyTransformations(ShaderProgram* shaderProgram) const;
+	void randomTranslate(float maxTranslation);
 	ShaderProgram* getShaderProgram() const { return shader; }
 	glm::mat4 getModelMatrix() const { return modelMatrix; }
+    std::string getType() const { return type;  }
 
 protected:
     ShaderProgram* shader;
     TransformationApply transformationApply;
     glm::mat4 modelMatrix;
+    std::string type;
 };
 
 #endif 

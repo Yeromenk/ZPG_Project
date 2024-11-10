@@ -8,9 +8,32 @@ Scene::~Scene() {
     }
 }
 
+void Scene::rotateTrees() {
+	for (auto tree : rotatingTrees) {
+        glm::vec3 axis(0.0f, 1.0f, 0.0f);
+        tree->rotate(5.0f, axis);
+	}
+}
+
+void Scene::translateBushes(float maxTranslation)
+{
+	for(auto bush : randomBushes)
+	{
+        bush->randomTranslate(maxTranslation);
+	}
+}
+
 void Scene::addObject(DrawableObject* object) {
     objects.push_back(object);
-}
+    if(object->getType() == "tree")
+    {
+        rotatingTrees.push_back(object);
+    }
+	if (object->getType() == "bush")
+	{
+		randomBushes.push_back(object);
+	}
+ }
 
 void Scene::draw(Camera* camera) {
     glm::mat4 viewMatrix = camera->getViewMatrix();
