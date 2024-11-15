@@ -1,6 +1,7 @@
-#version 400
-out vec4 out_Color;
+#version 330 core
 
-void main(void) {
-    out_Color = vec4(1.0, 1.0, 1.0, 1.0); // Константный белый цвет
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0, 1.0, 1.0, 1.0); 
 }

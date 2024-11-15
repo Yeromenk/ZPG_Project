@@ -49,22 +49,28 @@ void Scene::draw(Camera* camera) {
         shader->setMat4("viewMatrix", viewMatrix);
         shader->setMat4("projectionMatrix", projectionMatrix);
         shader->setMat3("normalMatrix", normalMatrix);
-
+        shader->setVec3("materialDiffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        shader->setVec3("viewPos", camera->getPosition());
         object->draw(viewMatrix, projectionMatrix);
+
+		glUseProgram(0);
     }
 
-    if (light) {
+    if (lights.size() > 0) {
         for (auto object : objects) {
             ShaderProgram* shader = object->getShaderProgram();
             shader->use();
-            shader->setVec3("lightPosition", light->getPosition());
-            shader->setVec3("lightColor", light->getColor());
-            shader->setFloat("lightIntensity", light->getIntensity());
-            shader->setVec3("viewPos", camera->getPosition()); 
+            shader->setInt("numberOfLights", lights.size());
+            for (int i = 0; i < lights.size(); i++) {
+                shader->setLight("lights", *lights[i], i);
+            }
+            shader->setVec3("viewPos", camera->getPosition());
+
+			glUseProgram(0);
         }
     }
 }
 
 void Scene::setLight(Light* light) {
-	this->light = light;
+	lights.push_back(light);
 }

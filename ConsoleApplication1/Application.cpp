@@ -36,25 +36,34 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	sphereScene = new Scene();
 	lightScene = new Scene();
 
-	Light* light = new Light(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
-	sphereScene->setLight(light);
-	lightScene->setLight(light);
-	
-	ShaderProgram* shader1 = new ShaderProgram(camera, light);
-	shader1->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
+	Light* light1 = new Light(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f);
+	Light* light2 = new Light(glm::vec3(10.0f, 0.0f, 5.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f);
+	Light* light3 = new Light(glm::vec3(-10.0f, 0.0f, 5.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f);
+	Light* light4 = new Light(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.02f);
+
+	std::vector<Light*> lights = { light1, light2, light3, light4 };
+
+	forestScene->setLight(light1);
+	forestScene->setLight(light2);
+	forestScene->setLight(light3);
+	forestScene->setLight(light4);
+
+	sphereScene->setLight(light1);
+
+	lightScene->setLight(light1);
 
 	// different shaders
-	ShaderProgram* shaderPhong = new ShaderProgram(camera, light);
+	ShaderProgram* shaderPhong = new ShaderProgram(camera, lights);
 	shaderPhong->create("./Shaders/phong_vertex_shader.glsl", "./Shaders/phong_fragment_shader.glsl");
-	ShaderProgram* constantShader = new ShaderProgram(camera, light);
+	ShaderProgram* constantShader = new ShaderProgram(camera, lights);
 	constantShader->create("./Shaders/constant_vertex_shader.glsl", "./Shaders/constant_fragment_shader.glsl");
-	ShaderProgram* lambertShader = new ShaderProgram(camera, light);
+	ShaderProgram* lambertShader = new ShaderProgram(camera, lights);
 	lambertShader->create("./Shaders/lambert_vertex_shader.glsl", "./Shaders/lambert_fragment_shader.glsl");
-	ShaderProgram* blinnShader = new ShaderProgram(camera, light);
+	ShaderProgram* blinnShader = new ShaderProgram(camera, lights);
 	blinnShader->create("./Shaders/blinn_vertex_shader.glsl", "./Shaders/blinn_fragment_shader.glsl");
 
-	Model* triangleModel = new Model(shader1, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle");
-	Model* plainModel = new Model(shader1, plain, sizeof(plain), 6, GL_TRIANGLES, "plain");
+	Model* triangleModel = new Model(shaderPhong, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle");
+	Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain");
 
 	glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
 	glm::vec3 treeSize = glm::vec3(2.0f);
@@ -121,7 +130,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
 	// scene 2
 	for (int i = 0; i < 55; i++) {
-		Model* treeModel = new Model(shader1, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree");
+		Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree");
 
 		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;
@@ -139,7 +148,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	}
 
 	for (int i = 0; i < 55; i++) {
-		Model* bushModel = new Model(shader1, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush");
+		Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush");
 
 		float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
 		float groundY = 0.0f;

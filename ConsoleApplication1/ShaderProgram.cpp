@@ -1,7 +1,7 @@
 #include "ShaderProgram.h"
 
 
-ShaderProgram::ShaderProgram(Camera* camera, Light* light) : programID(0), camera(camera), light(light)
+ShaderProgram::ShaderProgram(Camera* camera, const std::vector<Light*> lights) : programID(0), camera(camera), lights(lights)
 {
 	
 }
@@ -38,14 +38,29 @@ void ShaderProgram::update(const char* message) {
 		setVec3("lightPosition", light->getPosition());
 		setVec3("lightColor", light->getColor());
 		setFloat("lightIntensity", light->getIntensity());
+		setFloat("lightAttenuation", light->getAttenuation());
 	}
    
 }
 
 void ShaderProgram::setVec3(const std::string& name, const glm::vec3& value) const {
-    glUniform3fv(glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
+	glUniform3fv(glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
 }
 
 void ShaderProgram::setFloat(const std::string& name, float value) const {
-    glUniform1f(glGetUniformLocation(programID, name.c_str()), value);
+	glUniform1f(glGetUniformLocation(programID, name.c_str()), value);
+}
+
+void ShaderProgram::setVec4(const std::string& name, const glm::vec4& value) const {
+    glUniform4fv(glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
+}
+
+void ShaderProgram::setInt(const std::string& name, int value) const {
+	glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
+}
+
+void ShaderProgram::setLight(const std::string& name, const Light& light, int index) const {
+	setVec4(name + "[" + std::to_string(index) + "].position", glm::vec4(light.getPosition(), 1.0f));
+	setVec4(name + "[" + std::to_string(index) + "].diffuse", glm::vec4(light.getColor(), 1.0f));
+	setFloat(name + "[" + std::to_string(index) + "].attenuation", light.getAttenuation());
 }

@@ -24,7 +24,7 @@ private:
     std::vector<DrawableObject*> objects;
 	std::vector<DrawableObject*> rotatingTrees;
 	std::vector<DrawableObject*> randomBushes;
-	Light* light;
+	std::vector<Light*> lights;
 };
 
 #endif 

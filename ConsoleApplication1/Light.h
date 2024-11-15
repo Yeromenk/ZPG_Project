@@ -7,22 +7,25 @@
 
 class Light : public Subject {
 public:
-    Light(const glm::vec3& position, const glm::vec3& color, float intensity);
+    Light(const glm::vec3& position, const glm::vec3& color, float intensity, float attenuation);
 
     void setPosition(const glm::vec3& position);
     void setColor(const glm::vec3& color);
     void setIntensity(float intensity);
+    void setAttenuation(float attenuation);
 
     glm::vec3 getPosition() const;
     glm::vec3 getColor() const;
 
     float getIntensity() const;
+	float getAttenuation() const;
 
 private:
     glm::vec3 position;
     glm::vec3 color;
 
     float intensity;
+	float attenuation;
 };
 
 #endif 

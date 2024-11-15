@@ -36,5 +36,7 @@ void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
     glBindVertexArray(VAO);
     glDrawArrays(drawMode, 0, vertexCount);
     glBindVertexArray(0);
+
+	glUseProgram(0);
 }
 

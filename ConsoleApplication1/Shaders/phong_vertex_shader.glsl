@@ -5,7 +5,7 @@ layout(location = 1) in vec3 in_Normal;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix; // (M-1)T
+uniform mat3 normalMatrix; 
 
 out vec4 ex_worldPosition;
 out vec3 ex_worldNormal;
