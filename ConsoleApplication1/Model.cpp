@@ -1,7 +1,7 @@
 #include "Model.h"
 
-Model::Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type)
-    : DrawableObject(shaderProgram, type), drawMode(drawMode), vertexCount(vertexCount) {
+Model::Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type, Material* material)
+    : DrawableObject(shaderProgram, type), drawMode(drawMode), vertexCount(vertexCount), material(material) {
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -31,6 +31,9 @@ void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
     shader->setMat4("model", modelMatrix);
     shader->setMat4("viewMatrix", viewMatrix);
     shader->setMat4("projectionMatrix", projectionMatrix);
+	shader->setVec3("material.ambient", material->getAmbient());
+	shader->setVec3("material.diffuse", material->getDiffuse());
+	shader->setVec3("material.specular", material->getSpecular());
     applyTransformations(shader);
 
     glBindVertexArray(VAO);

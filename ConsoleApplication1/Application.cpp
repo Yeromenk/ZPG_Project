@@ -66,8 +66,18 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     ShaderProgram* blinnShader = new ShaderProgram(camera, lights);
     blinnShader->create("./Shaders/blinn_vertex_shader.glsl", "./Shaders/blinn_fragment_shader.glsl");
 
-    Model* triangleModel = new Model(shaderPhong, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle");
-    Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain");
+    // materials
+    Material* treeMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f));
+    Material* bushMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.4f, 0.8f, 0.4f), glm::vec3(0.2f, 0.2f, 0.2f));
+    Material* sphereMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+    Material* giftMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* suziFlatMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* suziSmoothMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* triangleMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* plainMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+
+    Model* triangleModel = new Model(shaderPhong, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial);
+    Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial);
 
     glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
     glm::vec3 treeSize = glm::vec3(2.0f);
@@ -95,7 +105,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
     // 3 scene
     for (int i = 0; i < 4; i++) {
-        Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere");
+        Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere", sphereMaterial);
         sphereModel->translate(spherePositions[i]);
         sphereModel->scale(modelScale);
         sphereScene->addObject(sphereModel);
@@ -105,37 +115,37 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     for (int i = 0; i < 4; i++) {
         if (i == 0)
         {
-            Model* giftModel = new Model(constantShader, gift, sizeof(gift), 66624, GL_TRIANGLES, "gift");
+            Model* giftModel = new Model(constantShader, gift, sizeof(gift), 66624, GL_TRIANGLES, "gift", giftMaterial);
             giftModel->translate(spherePositions[i]);
             giftModel->scale(giftScale);
             lightScene->addObject(giftModel);
         }
         else if (i == 1)
         {
-            Model* suziFlatModel = new Model(lambertShader, suziFlat, sizeof(suziFlat), 2904, GL_TRIANGLES, "suziFlat");
+            Model* suziFlatModel = new Model(lambertShader, suziFlat, sizeof(suziFlat), 2904, GL_TRIANGLES, "suziFlat", suziFlatMaterial);
             suziFlatModel->translate(spherePositions[i]);
             suziFlatModel->scale(modelScale);
             lightScene->addObject(suziFlatModel);
         }
         else if (i == 2)
         {
-            Model* suziSmoothModel = new Model(blinnShader, suziSmooth, sizeof(suziSmooth), 2904, GL_TRIANGLES, "suziSmooth");
+            Model* suziSmoothModel = new Model(blinnShader, suziSmooth, sizeof(suziSmooth), 2904, GL_TRIANGLES, "suziSmooth", suziSmoothMaterial);
             suziSmoothModel->translate(spherePositions[i]);
             suziSmoothModel->scale(modelScale);
             lightScene->addObject(suziSmoothModel);
         }
         else if (i == 3)
         {
-            Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere");
+            Model* sphereModel = new Model(shaderPhong, sphere, sizeof(sphere), 2880, GL_TRIANGLES, "sphere", sphereMaterial);
             sphereModel->translate(spherePositions[i]);
             sphereModel->scale(modelScale);
             lightScene->addObject(sphereModel);
         }
     }
 
-    // scene 2
+    // scene 2 & 5
     for (int i = 0; i < 55; i++) {
-        Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree");
+        Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -154,7 +164,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     }
 
     for (int i = 0; i < 55; i++) {
-        Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush");
+        Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -251,18 +261,16 @@ void Application::processInput(GLFWwindow* glfwWindow) {
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_5) == GLFW_PRESS) {
         currentScene = nightForestScene;
-        std::cout << "Night Forest Scene" << std::endl;
+        std::cout << "Scene 5" << std::endl;
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {
         forestScene->rotateTrees();
-        nightForestScene->rotateTrees();  // Вращение деревьев в ночном лесу
         std::cout << "Rotate trees" << std::endl;
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_T) == GLFW_PRESS) {
         forestScene->translateBushes(5.0f);
-        nightForestScene->translateBushes(5.0f);  // Перемещение кустов в ночном лесу
         std::cout << "Translate bushes" << std::endl;
     }
 
