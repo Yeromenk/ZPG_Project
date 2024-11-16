@@ -1,7 +1,7 @@
 #include "Light.h"
 
-Light::Light(const glm::vec3& position, const glm::vec3& color, float intensity, float attenuation)
-    : position(position), color(color), intensity(intensity), attenuation(attenuation) {}
+Light::Light(int type, const glm::vec3& position, const glm::vec3 direction, const glm::vec3& color, float intensity, float attenuation, float cutoff)
+    :type(type), position(position), color(color), intensity(intensity), attenuation(attenuation), cutoff(cutoff), direction(direction) {}
 
 void Light::setPosition(const glm::vec3& position) {
     this->position = position;
@@ -38,3 +38,23 @@ float Light::getIntensity() const {
 float Light::getAttenuation() const {
 	return attenuation;
 }
+
+float Light::getCutoff() const {
+	return cutoff;
+}
+
+int Light::getType() const {
+	return type;
+}
+
+void Light::setDirection(const glm::vec3& direction)
+{
+	this->direction = direction;
+	notify("light");
+}
+
+glm::vec3 Light::getDirection() const
+{
+	return direction;
+}
+

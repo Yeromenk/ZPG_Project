@@ -22,7 +22,9 @@ public:
 	void move_backward(float deltaTime);
 	void move_left(float deltaTime);
 	void move_right(float deltaTime);
+
     glm::vec3 getPosition() const;
+    glm::vec3 getDirection() const;
 
 private:
     glm::vec3 position;

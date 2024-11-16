@@ -54,3 +54,7 @@ void Camera::move_right(float deltaTime) {
 glm::vec3 Camera::getPosition() const {
 	return position;
 }
+
+glm::vec3 Camera::getDirection() const {
+	return front;
+}

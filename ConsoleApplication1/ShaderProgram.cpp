@@ -60,7 +60,10 @@ void ShaderProgram::setInt(const std::string& name, int value) const {
 }
 
 void ShaderProgram::setLight(const std::string& name, const Light& light, int index) const {
+	setInt(name + "[" + std::to_string(index) + "].type", light.getType());
 	setVec4(name + "[" + std::to_string(index) + "].position", glm::vec4(light.getPosition(), 1.0f));
+	setVec4(name + "[" + std::to_string(index) + "].direction", glm::vec4(light.getDirection(), 1.0f));
 	setVec4(name + "[" + std::to_string(index) + "].diffuse", glm::vec4(light.getColor(), 1.0f));
 	setFloat(name + "[" + std::to_string(index) + "].attenuation", light.getAttenuation());
+	setFloat(name + "[" + std::to_string(index) + "].cutoff", light.getCutoff());
 }

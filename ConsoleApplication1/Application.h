@@ -37,9 +37,9 @@ private:
     Scene* forestScene;
     Scene* sphereScene;
     Scene* lightScene;
-	Camera* camera;
+    Scene* nightForestScene; 
+    Camera* camera;
     CameraController* cameraController;
-
 };
 
 #endif 

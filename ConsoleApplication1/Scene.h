@@ -20,6 +20,8 @@ public:
     void rotateTrees();
 	void translateBushes(float maxTranslation);
 
+	std::vector<Light*> getLights() const { return lights; }
+
 private:
     std::vector<DrawableObject*> objects;
 	std::vector<DrawableObject*> rotatingTrees;

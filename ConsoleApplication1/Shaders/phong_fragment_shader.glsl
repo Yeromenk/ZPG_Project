@@ -1,44 +1,87 @@
 #version 400
 #define MAX_LIGHTS 4
 
-in vec4 ex_worldPosition;
+in vec3 ex_worldPosition;
 in vec3 ex_worldNormal;
 
 out vec4 out_Color;
 
 struct Light {
-    vec4 position;
-    vec4 diffuse;
-    float attenuation;
+    int type;  // Тип света: 0 - точечный, 1 - направленный, 2 - прожектор
+    vec4 position;  // Позиция света (для точечного и прожектора)
+    vec4 direction;  // Направление света (для направленного и прожектора)
+    vec4 diffuse;  // Цвет диффузного света
+    float attenuation;  // Коэффициент затухания (для точечного и прожектора)
+    float cutoff;  // Угол среза (для прожектора)
 };
 
 uniform Light lights[MAX_LIGHTS];
 uniform int numberOfLights;
 uniform vec3 viewPos;
-uniform vec3 materialDiffuse; 
+uniform vec3 materialDiffuse;
+
+vec3 calculatePointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+    vec3 lightDir = normalize(vec3(light.position) - fragPos);
+    float distance = length(vec3(light.position) - fragPos);
+    float attenuation = 1.0 / (1.0 + light.attenuation * distance * distance);
+
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * materialDiffuse * vec3(light.diffuse) * attenuation;
+
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = spec * vec3(light.diffuse) * attenuation;
+
+    return diffuse + specular;
+}
+
+vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDir) {
+    vec3 lightDir = normalize(-vec3(light.direction));
+
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * materialDiffuse * vec3(light.diffuse);
+
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = spec * vec3(light.diffuse);
+
+    return diffuse + specular;
+}
+
+vec3 calculateSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+    vec3 lightDir = normalize(vec3(light.position) - fragPos);
+    float distance = length(vec3(light.position) - fragPos);
+    float attenuation = 1.0 / (1.0 + light.attenuation * distance * distance);
+
+    float theta = dot(lightDir, normalize(-vec3(light.direction)));
+    float epsilon = light.cutoff - 0.1;
+    float intensity = clamp((theta - light.cutoff) / epsilon, 0.0, 1.0);
+
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * materialDiffuse * vec3(light.diffuse) * attenuation * intensity;
+
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = spec * vec3(light.diffuse) * attenuation * intensity;
+
+    return diffuse + specular;
+}
 
 void main(void) {
     vec3 normal = normalize(ex_worldNormal);
-    vec3 viewDir = normalize(viewPos - vec3(ex_worldPosition));
-    vec4 result = vec4(0.0);
+    vec3 viewDir = normalize(viewPos - ex_worldPosition);
+    vec3 result = vec3(0.0);
 
     for (int i = 0; i < numberOfLights; i++) {
-        vec3 lightDir = normalize(vec3(lights[i].position) - vec3(ex_worldPosition));
-        float distance = length(vec3(lights[i].position) - vec3(ex_worldPosition));
-        float attenuation = 1.0 / (1.0 + lights[i].attenuation * distance * distance);
-
-       
-        float diff = max(dot(normal, lightDir), 0.0);
-        vec4 diffuse = diff * vec4(materialDiffuse, 1.0) * lights[i].diffuse * attenuation; 
-
-        
-        vec3 halfwayDir = normalize(lightDir + viewDir);
-        float spec = pow(max(dot(normal, halfwayDir), 0.0), 32);
-        vec4 specular = spec * lights[i].diffuse * attenuation;
-
-        result += diffuse + specular;
+        if (lights[i].type == 0) {
+            result += calculatePointLight(lights[i], normal, ex_worldPosition, viewDir);
+        } else if (lights[i].type == 1) {
+            result += calculateDirectionalLight(lights[i], normal, viewDir);
+        } else if (lights[i].type == 2) {
+            result += calculateSpotLight(lights[i], normal, ex_worldPosition, viewDir);
+        }
     }
 
-    vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
-    out_Color = ambient + result;
+    vec3 ambient = vec3(0.1) * materialDiffuse;
+    out_Color = vec4(ambient + result, 1.0);
 }
