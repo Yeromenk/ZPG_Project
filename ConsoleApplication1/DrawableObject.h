@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
 #include "Transformation.h"
-#include "TransformationApply.h"
+#include "TransformationComposite.h"
 #include "TransformationRotate.h"
 #include "TransformationTranslate.h"
 #include "TransformationScale.h"
@@ -15,7 +15,7 @@
 class DrawableObject {
 public:
     DrawableObject(ShaderProgram* shader, const std::string& type);
-    virtual ~DrawableObject() = default;
+    virtual ~DrawableObject();
 
     void translate(glm::vec3& translation);
     void rotate(float angle, glm::vec3& axis);
@@ -30,7 +30,7 @@ public:
 
 protected:
     ShaderProgram* shader;
-    TransformationApply transformationApply;
+    TransformationComposite* transformationApply;
     glm::mat4 modelMatrix;
     std::string type;
 };

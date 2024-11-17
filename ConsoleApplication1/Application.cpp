@@ -202,7 +202,14 @@ void Application::run() {
 }
 
 void Application::mainLoop() {
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
+
     while (!glfwWindowShouldClose(window)) {
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
         processInput(window);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -222,6 +229,9 @@ void Application::mainLoop() {
         Light* spotLight = nightForestScene->getLights()[0];
         spotLight->setPosition(camera->getPosition());
         spotLight->setDirection(camera->getDirection());
+
+        forestScene->rotateTrees();
+		//forestScene->translateBushes(5.0f);
 
         currentScene->draw(camera);
 
@@ -264,13 +274,13 @@ void Application::processInput(GLFWwindow* glfwWindow) {
         std::cout << "Scene 5" << std::endl;
     }
 
-    if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {
+    /*if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {
         forestScene->rotateTrees();
         std::cout << "Rotate trees" << std::endl;
-    }
+    }*/
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_T) == GLFW_PRESS) {
-        forestScene->translateBushes(5.0f);
+        forestScene->translateBushes(3.0f);
         std::cout << "Translate bushes" << std::endl;
     }
 

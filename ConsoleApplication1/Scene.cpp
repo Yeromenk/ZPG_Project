@@ -11,7 +11,7 @@ Scene::~Scene() {
 void Scene::rotateTrees() {
 	for (auto tree : rotatingTrees) {
         glm::vec3 axis(0.0f, 1.0f, 0.0f);
-        tree->rotate(5.0f, axis);
+        tree->rotate(1.0f, axis);
 	}
 }
 

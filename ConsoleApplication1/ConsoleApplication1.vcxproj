@@ -147,7 +147,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Transformation.h" />
-    <ClInclude Include="TransformationApply.h" />
+    <ClInclude Include="TransformationComposite.h" />
     <ClInclude Include="TransformationRotate.h" />
     <ClInclude Include="TransformationScale.h" />
     <ClInclude Include="TransformationTranslate.h" />
@@ -167,7 +167,7 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="Transformation.cpp" />
-    <ClCompile Include="TransformationApply.cpp" />
+    <ClCompile Include="TransformationComposite.cpp" />
     <ClCompile Include="TransformationRotate.cpp" />
     <ClCompile Include="TransformationScale.cpp" />
     <ClCompile Include="TransformationTranslate.cpp" />

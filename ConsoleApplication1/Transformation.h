@@ -14,8 +14,11 @@
 
 class Transformation {
 public:
-    glm::mat4 modelMatrix;
-    Transformation();
+    virtual glm::mat4 apply() = 0;  // Метод для применения трансформации
+    virtual ~Transformation() = default;
+
+protected:
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
 };
 
 #endif 

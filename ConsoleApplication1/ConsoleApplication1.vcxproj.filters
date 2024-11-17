@@ -58,10 +58,10 @@
     <ClInclude Include="TransformationScale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformationApply.h">
+    <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
+    <ClInclude Include="TransformationComposite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -114,10 +114,10 @@
     <ClCompile Include="TransformationRotate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransformationApply.cpp">
+    <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
+    <ClCompile Include="TransformationComposite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

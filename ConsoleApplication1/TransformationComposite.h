@@ -2,12 +2,14 @@
 #include "Transformation.h"
 
 class TransformationComposite : public Transformation
-
 {
 public:
 	void addTransformation(Transformation* transformation);
-	glm::mat4 apply(glm::mat4 modelMatrix) override;
+
+	glm::mat4 apply() override;
+
 private:
 	std::vector<Transformation*> transformations;
 };
+
 
