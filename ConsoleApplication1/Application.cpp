@@ -1,12 +1,17 @@
 #include "Application.h"
 
 float triangleVertices[] = {
-    -0.3f,  0.8f, 0.0f,  0.3f,  0.5f, 0.0f,
-    -0.4f, 0.5f, 0.0f,  0.3f, 0.5f, 0.0f,
-    0.1f, 0.6f, 0.0f, 0.9f, 0.5f, 0.0f
+    // positions         // normals          // texture coords
+    -0.3f,  0.8f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+     0.3f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+    -0.4f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 1.0f,
+
+     0.3f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+    -0.4f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 1.0f,
+     0.1f,  0.6f, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f
 };
 
-Application::Application() : window(nullptr), currentScene(nullptr), primitiveScene(nullptr), forestScene(nullptr), nightForestScene(nullptr), camera(nullptr), sphereScene(nullptr), lightScene(nullptr) {
+Application::Application() : window(nullptr), currentScene(nullptr), primitiveScene(nullptr), forestScene(nullptr), nightForestScene(nullptr),  sphereScene(nullptr), camera(nullptr), lightScene(nullptr), skyBoxScene(nullptr) {
     if (!glfwInit()) {
         std::cerr << "ERROR: could not start GLFW3\n";
         exit(EXIT_FAILURE);
@@ -32,12 +37,13 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
     primitiveScene = new Scene();
     forestScene = new Scene();
-    nightForestScene = new Scene();  // Копия леса для ночного освещения
+    nightForestScene = new Scene();  
     sphereScene = new Scene();
     lightScene = new Scene();
+	skyBoxScene = new Scene();
 
-    Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.0f);
-    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.0f, 0.0f);
+    Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 0.09f, 0.0f);
+    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.0f, 0.0f);
     Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
 
     std::vector<Light*> lights = { pointLight, directionalLight, spotLight };
@@ -46,14 +52,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     forestScene->setLight(directionalLight);
     forestScene->setLight(spotLight);
 
-    Light* nightSpotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
+    Light* nightSpotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.01f, glm::cos(glm::radians(12.5f)));
+
 
     std::vector<Light*> nightLights = { nightSpotLight };
 
-    nightForestScene->setLight(nightSpotLight);
+    nightForestScene->setLight(spotLight);
 
     sphereScene->setLight(pointLight);
-
     lightScene->setLight(pointLight);
 
     // different shaders
@@ -65,19 +71,26 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     lambertShader->create("./Shaders/lambert_vertex_shader.glsl", "./Shaders/lambert_fragment_shader.glsl");
     ShaderProgram* blinnShader = new ShaderProgram(camera, lights);
     blinnShader->create("./Shaders/blinn_vertex_shader.glsl", "./Shaders/blinn_fragment_shader.glsl");
+	ShaderProgram* triangleShader = new ShaderProgram(camera, lights);
+	triangleShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
 
     // materials
     Material* treeMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f));
     Material* bushMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.4f, 0.8f, 0.4f), glm::vec3(0.2f, 0.2f, 0.2f));
     Material* sphereMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
-    Material* giftMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
-	Material* suziFlatMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
-	Material* suziSmoothMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+    Material* giftMaterial = new Material(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.8f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* suziFlatMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.4f, 0.8f, 0.4f), glm::vec3(0.4f, 0.4f, 0.4f));
+	Material* suziSmoothMaterial = new Material(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.8f, 0.4f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
 	Material* triangleMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
 	Material* plainMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
 
-    Model* triangleModel = new Model(shaderPhong, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial);
-    Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial);
+    // textures
+    Texture* triangleTexture = new Texture("./Textures/wooden_fence.png");
+    Texture* plainTexture = new Texture("./Textures/grass.png");
+
+    Model* triangleModel = new Model(triangleShader, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial, triangleTexture);
+	Model* plainModelSkybox = new Model(triangleShader, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial, plainTexture);
+    /*Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial);*/
 
     glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
     glm::vec3 treeSize = glm::vec3(2.0f);
@@ -87,11 +100,15 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     triangleModel->translate(treePosition);
     triangleModel->scale(treeSize);
 
-    primitiveScene->addObject(triangleModel);
+    //plainModel->scale(plainSize);
+	plainModelSkybox->scale(plainSize);
 
-    plainModel->scale(plainSize);
-    forestScene->addObject(plainModel);
-    nightForestScene->addObject(plainModel);  // Добавляем плоскость в ночной лес
+    primitiveScene->addObject(triangleModel);
+	forestScene->addObject(plainModelSkybox);
+	nightForestScene->addObject(plainModelSkybox);
+    //forestScene->addObject(plainModel);
+    //nightForestScene->addObject(plainModel);
+	skyBoxScene->addObject(plainModelSkybox);
 
     glm::vec3 spherePositions[] = {
         glm::vec3(-1.0f, 0.0f, 1.0f),
@@ -143,9 +160,10 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         }
     }
 
-    // scene 2 & 5
+	// scene 2 - forest scene with lights. 5 scene - night forest scene with spotlight and 6 scene - skybox
     for (int i = 0; i < 55; i++) {
         Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
+		Model* treeModelSkyBox = new Model(triangleShader, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -159,12 +177,19 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         treeModel->translate(treePosition);
         treeModel->scale(treeScale);
         treeModel->rotate(randomRotation, treeRotate);
+
+		treeModelSkyBox->translate(treePosition);
+		treeModelSkyBox->scale(treeScale);
+		treeModelSkyBox->rotate(randomRotation, treeRotate);
+
         forestScene->addObject(treeModel);
-        nightForestScene->addObject(treeModel);  // Добавляем деревья в ночной лес
+        nightForestScene->addObject(treeModel);
+		skyBoxScene->addObject(treeModelSkyBox);
     }
 
     for (int i = 0; i < 55; i++) {
         Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial);
+		Model* bushModelSkyBox = new Model(triangleShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -178,8 +203,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         bushModel->translate(bushPosition);
         bushModel->scale(bushScale);
         bushModel->rotate(randomRotation, bushRotate);
+
+		bushModelSkyBox->translate(bushPosition);
+		bushModelSkyBox->scale(bushScale);
+		bushModelSkyBox->rotate(randomRotation, bushRotate);
+
         forestScene->addObject(bushModel);
-        nightForestScene->addObject(bushModel);  // Добавляем кусты в ночной лес
+        nightForestScene->addObject(bushModel);
+		skyBoxScene->addObject(bushModelSkyBox);
     }
 
     currentScene = primitiveScene;
@@ -193,6 +224,7 @@ Application::~Application() {
     delete nightForestScene;
     delete sphereScene;
     delete lightScene;
+	delete skyBoxScene;
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -202,14 +234,8 @@ void Application::run() {
 }
 
 void Application::mainLoop() {
-	float deltaTime = 0.0f;
-	float lastFrame = 0.0f;
 
     while (!glfwWindowShouldClose(window)) {
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
         processInput(window);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -225,11 +251,12 @@ void Application::mainLoop() {
 
         cameraController->processMouseMovement(xoffset, yoffset);
 
-        // Обновляем позицию и направление прожектора вместе с камерой
+		// Position and direction of the spotlight are updated together with the camera
         Light* spotLight = nightForestScene->getLights()[0];
         spotLight->setPosition(camera->getPosition());
         spotLight->setDirection(camera->getDirection());
 
+        // Dynamic rotation
         forestScene->rotateTrees();
 		//forestScene->translateBushes(5.0f);
 
@@ -272,6 +299,11 @@ void Application::processInput(GLFWwindow* glfwWindow) {
     if (glfwGetKey(glfwWindow, GLFW_KEY_5) == GLFW_PRESS) {
         currentScene = nightForestScene;
         std::cout << "Scene 5" << std::endl;
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_6) == GLFW_PRESS) {
+        currentScene = skyBoxScene;
+        std::cout << "Scene 6" << std::endl;
     }
 
     /*if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {

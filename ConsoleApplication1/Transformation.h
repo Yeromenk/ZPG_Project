@@ -14,7 +14,7 @@
 
 class Transformation {
 public:
-    virtual glm::mat4 apply() = 0;  // Метод для применения трансформации
+    virtual glm::mat4 apply() = 0;  
     virtual ~Transformation() = default;
 
 protected:

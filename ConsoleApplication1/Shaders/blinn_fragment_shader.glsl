@@ -7,12 +7,12 @@ in vec3 ex_worldNormal;
 out vec4 out_Color;
 
 struct Light {
-    int type;  // Тип света: 0 - точечный, 1 - направленный, 2 - прожектор
-    vec4 position;  // Позиция света (для точечного и прожектора)
-    vec4 direction;  // Направление света (для направленного и прожектора)
-    vec4 diffuse;  // Цвет диффузного света
-    float attenuation;  // Коэффициент затухания (для точечного и прожектора)
-    float cutoff;  // Угол среза (для прожектора)
+    int type;  
+    vec4 position;  
+    vec4 direction;  
+    vec4 diffuse; 
+    float attenuation;  
+    float cutoff; 
 };
 
 struct Material {

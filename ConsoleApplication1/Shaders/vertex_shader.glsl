@@ -1,17 +1,18 @@
-#version 400
-layout(location = 0) in vec3 in_Position;
-layout(location = 1) in vec3 in_Normal;
+#version 330
+
+layout(location=0) in vec3 vp;          // Позиция вершины
+layout(location=1) in vec3 normal;      // Нормаль вершины
+layout(location=2) in vec2 texCoord;    // UV координаты
+
+out vec3 fragNormal;                    // Нормаль для фрагментного шейдера
+out vec2 fragTexCoord;                  // UV координаты для фрагментного шейдера
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix;
 
-out vec3 ex_worldPosition;
-out vec3 ex_worldNormal;
-
-void main(void) {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(in_Position, 1.0f);
-    ex_worldPosition = vec3(modelMatrix * vec4(in_Position, 1.0f));
-    ex_worldNormal = normalMatrix * in_Normal;
+void main() {
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);
+    fragNormal = normal;
+    fragTexCoord = texCoord;            // Передача UV координат во фрагментный шейдер
 }

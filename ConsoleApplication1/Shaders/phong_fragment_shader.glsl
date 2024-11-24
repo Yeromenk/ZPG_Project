@@ -7,12 +7,12 @@ in vec3 ex_worldNormal;
 out vec4 out_Color;
 
 struct Light {
-    int type;  // Тип света: 0 - точечный, 1 - направленный, 2 - прожектор
-    vec4 position;  // Позиция света (для точечного и прожектора)
-    vec4 direction;  // Направление света (для направленного и прожектора)
-    vec4 diffuse;  // Цвет диффузного света
-    float attenuation;  // Коэффициент затухания (для точечного и прожектора)
-    float cutoff;  // Угол среза (для прожектора)
+    int type;  
+    vec4 position;  
+    vec4 direction;  
+    vec4 diffuse;  
+    float attenuation;  
+    float cutoff;  
 };
 
 struct Material {
@@ -60,7 +60,7 @@ vec3 calculateSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     float attenuation = 1.0 / (1.0 + light.attenuation * distance * distance);
 
     float theta = dot(lightDir, normalize(-vec3(light.direction)));
-    float epsilon = light.cutoff - 0.1;
+    float epsilon = light.cutoff - 0.05;  
     float intensity = clamp((theta - light.cutoff) / epsilon, 0.0, 1.0);
 
     float diff = max(dot(normal, lightDir), 0.0);

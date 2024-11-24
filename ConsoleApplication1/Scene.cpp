@@ -3,9 +3,9 @@
 Scene::Scene() {}
 
 Scene::~Scene() {
-    for (auto object : objects) {
+  /*  for (auto object : objects) {
         delete object;
-    }
+    }*/
 }
 
 void Scene::rotateTrees() {
@@ -53,10 +53,10 @@ void Scene::draw(Camera* camera) {
         shader->setVec3("viewPos", camera->getPosition());
         object->draw(viewMatrix, projectionMatrix);
 
-		glUseProgram(0);
+        glUseProgram(0);
     }
 
-    if (lights.size() > 0) {
+    if (!lights.empty()) {
         for (auto object : objects) {
             ShaderProgram* shader = object->getShaderProgram();
             shader->use();
@@ -66,7 +66,7 @@ void Scene::draw(Camera* camera) {
             }
             shader->setVec3("viewPos", camera->getPosition());
 
-			glUseProgram(0);
+            glUseProgram(0);
         }
     }
 }
