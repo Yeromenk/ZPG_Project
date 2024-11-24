@@ -1,6 +1,5 @@
 #version 330
 
-in vec3 fragNormal;                     // Нормаль из вершинного шейдера
 in vec2 fragTexCoord;                   // UV координаты из вершинного шейдера
 
 out vec4 frag_colour;
