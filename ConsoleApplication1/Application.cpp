@@ -10,47 +10,7 @@ float triangleVertices[] = {
      0.1f,  0.6f, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f
 };
 
-const float skycube[108] = {
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-};
-
-
-Application::Application() : window(nullptr), currentScene(nullptr), primitiveScene(nullptr), forestScene(nullptr), nightForestScene(nullptr), sphereScene(nullptr), camera(nullptr), lightScene(nullptr), skyBoxScene(nullptr) {
+Application::Application() : window(nullptr), currentScene(nullptr), primitiveScene(nullptr), forestScene(nullptr), nightForestScene(nullptr), sphereScene(nullptr), camera(nullptr), lightScene(nullptr) {
     if (!glfwInit()) {
         std::cerr << "ERROR: could not start GLFW3\n";
         exit(EXIT_FAILURE);
@@ -80,11 +40,11 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     nightForestScene = new Scene();
     sphereScene = new Scene();
     lightScene = new Scene();
-    skyBoxScene = new Scene();
+    
 
     // lights
-    Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 0.09f, 0.0f);
-    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.0f, 0.0f);
+    Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.0f);
+    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 0.0f, 0.0f);
     Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
 
     std::vector<Light*> lights = { pointLight, directionalLight, spotLight };
@@ -115,8 +75,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     textureShader->create("./Shaders/vertex_shader.glsl", "./Shaders/fragment_shader.glsl");
     ShaderProgram* skyBoxShader = new ShaderProgram(camera, lights);
     skyBoxShader->create("./Shaders/skybox_vertex_shader.glsl", "./Shaders/skybox_fragment_shader.glsl");
-    ShaderProgram* objectShader = new ShaderProgram(camera, lights);
-    objectShader->create("./Shaders/object_vertex_shader.glsl", "./Shaders/object_fragment_shader.glsl");
+	ShaderProgram* blinnTextureShader = new ShaderProgram(camera, lights);
+	blinnTextureShader->create("./Shaders/BlinnVertexShaderTexture.glsl", "./Shaders/BlinnFragmentShaderTexture.glsl");
+	ShaderProgram* constantTextureShader = new ShaderProgram(camera, lights);
+	constantTextureShader->create("./Shaders/ConstantVertexShaderTexture.glsl", "./Shaders/ConstantFragmentShaderTexture.glsl");
+	ShaderProgram* lambertTextureShader = new ShaderProgram(camera, lights);
+	lambertTextureShader->create("./Shaders/LambertVertexShaderTexture.glsl", "./Shaders/LambertFragmentShaderTexture.glsl");
+	ShaderProgram* phongTextureShader = new ShaderProgram(camera, lights);
+	phongTextureShader->create("./Shaders/PhongVertexShaderTexture.glsl", "./Shaders/PhongFragmentShaderTexture.glsl");
 
     // materials
     Material* treeMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f));
@@ -127,18 +93,20 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     Material* suziSmoothMaterial = new Material(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.8f, 0.4f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
     Material* triangleMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
     Material* plainMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
+	Material* houseMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.7f, 0.7f, 0.7f));
+	Material* loginMaterial = new Material(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.7f, 0.7f, 0.7f));
+
 
     // textures
     Texture* triangleTexture = new Texture("./Textures/wooden_fence.png");
     Texture* plainTexture = new Texture("./Textures/grass.png");
 	Texture* skyBoxTexture = new Texture("./Models/House/model.png");
-	Texture* zombieTexture = new Texture("./Models/Zombie/zombie.png");
 
 	// models
     Model* triangleModel = new Model(textureShader, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial, triangleTexture);
-    Model* plainModelSkybox = new Model(textureShader, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial, plainTexture);
-	Model* houseModel = new Model("./Models/House/model.obj", textureShader, plainMaterial, skyBoxTexture);
-	Model* loginModel = new Model("./Models/Login/login.obj", textureShader, plainMaterial, triangleTexture);
+    Model* plainModel = new Model(lambertTextureShader, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial, plainTexture);
+	Model* houseModel = new Model("./Models/House/model.obj", phongTextureShader, houseMaterial, skyBoxTexture);
+	Model* loginModel = new Model("./Models/Login/login.obj", blinnTextureShader , loginMaterial, triangleTexture);
 	
 
     glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
@@ -160,19 +128,16 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
 	loginModel->translate(loginPosition);
 
-    plainModelSkybox->scale(plainSize);
+    plainModel->scale(plainSize);
 
     primitiveScene->addObject(triangleModel);
 
-    forestScene->addObject(plainModelSkybox);
+    forestScene->addObject(plainModel);
 	forestScene->addObject(houseModel);
 	forestScene->addObject(loginModel);
 
-    nightForestScene->addObject(plainModelSkybox);
+    nightForestScene->addObject(plainModel);
 
-    skyBoxScene->addObject(plainModelSkybox);
-
-    
     glm::vec3 spherePositions[] = {
         glm::vec3(-1.0f, 0.0f, 1.0f),
         glm::vec3(1.0f, 0.0f, 1.0f),
@@ -226,7 +191,6 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     // scene 2 - forest scene with lights. 5 scene - night forest scene with spotlight and 6 scene - skybox
     for (int i = 0; i < 55; i++) {
         Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
-        Model* treeModelSkyBox = new Model(objectShader, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -241,18 +205,12 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         treeModel->scale(treeScale);
         treeModel->rotate(randomRotation, treeRotate);
 
-        treeModelSkyBox->translate(treePosition);
-        treeModelSkyBox->scale(treeScale);
-        treeModelSkyBox->rotate(randomRotation, treeRotate);
-
         forestScene->addObject(treeModel);
         nightForestScene->addObject(treeModel);
-        skyBoxScene->addObject(treeModelSkyBox);
     }
 
     for (int i = 0; i < 55; i++) {
         Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial);
-        Model* bushModelSkyBox = new Model(objectShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -267,13 +225,8 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         bushModel->scale(bushScale);
         bushModel->rotate(randomRotation, bushRotate);
 
-        bushModelSkyBox->translate(bushPosition);
-        bushModelSkyBox->scale(bushScale);
-        bushModelSkyBox->rotate(randomRotation, bushRotate);
-
         forestScene->addObject(bushModel);
         nightForestScene->addObject(bushModel);
-        skyBoxScene->addObject(bushModelSkyBox);
     }
 
     currentScene = primitiveScene;
@@ -287,7 +240,6 @@ Application::~Application() {
     delete nightForestScene;
     delete sphereScene;
     delete lightScene;
-	delete skyBoxScene;
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -363,11 +315,6 @@ void Application::processInput(GLFWwindow* glfwWindow) {
     if (glfwGetKey(glfwWindow, GLFW_KEY_5) == GLFW_PRESS) {
         currentScene = nightForestScene;
         std::cout << "Scene 5" << std::endl;
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_6) == GLFW_PRESS) {
-        currentScene = skyBoxScene;
-        std::cout << "Scene 6" << std::endl;
     }
 
     /*if (glfwGetKey(glfwWindow, GLFW_KEY_R) == GLFW_PRESS) {

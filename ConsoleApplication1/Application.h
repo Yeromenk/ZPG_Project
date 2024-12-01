@@ -38,7 +38,6 @@ private:
     Scene* sphereScene;
     Scene* lightScene;
     Scene* nightForestScene;
-    Scene* skyBoxScene;
     Camera* camera;
     CameraController* cameraController;
 };
