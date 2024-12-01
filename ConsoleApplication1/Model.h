@@ -3,13 +3,17 @@
 
 #include "DrawableObject.h"
 #include <random>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
 
 #include "Material.h"
 #include "Texture.h"
 
 class Model : public DrawableObject {
 public:
-    Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type, Material* material, Texture* texture=nullptr, bool isSkyBox=false);
+    Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type, Material* material, Texture* texture=nullptr);
+    Model(const char* path, ShaderProgram* shaderProgram, Material* material, Texture* texture=nullptr);
     ~Model();
 
     void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;

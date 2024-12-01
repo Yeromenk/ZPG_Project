@@ -74,6 +74,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     camera = new Camera(0.0f, 2.0f, 3.0f, 0.0f, 1.0f, 0.0f);
     cameraController = new CameraController(camera);
 
+    // scenes
     primitiveScene = new Scene();
     forestScene = new Scene();
     nightForestScene = new Scene();
@@ -81,6 +82,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     lightScene = new Scene();
     skyBoxScene = new Scene();
 
+    // lights
     Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 0.09f, 0.0f);
     Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.0f, 0.0f);
     Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
@@ -129,29 +131,45 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     // textures
     Texture* triangleTexture = new Texture("./Textures/wooden_fence.png");
     Texture* plainTexture = new Texture("./Textures/grass.png");
+	Texture* skyBoxTexture = new Texture("./Models/House/model.png");
+	Texture* zombieTexture = new Texture("./Models/Zombie/zombie.png");
 
+	// models
     Model* triangleModel = new Model(textureShader, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial, triangleTexture);
     Model* plainModelSkybox = new Model(textureShader, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial, plainTexture);
-    /*Model* plainModel = new Model(shaderPhong, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial);*/
+	Model* houseModel = new Model("./Models/House/model.obj", textureShader, plainMaterial, skyBoxTexture);
+	Model* loginModel = new Model("./Models/Login/login.obj", textureShader, plainMaterial, triangleTexture);
+	
 
     glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
     glm::vec3 treeSize = glm::vec3(2.0f);
 
-    glm::vec3 plainSize = glm::vec3(5.0f);
+	glm::vec3 housePosition = glm::vec3(6.5f, 0.0f, 0.0f);
+	glm::vec3 houseSize = glm::vec3(0.1f);
 
-    glm::vec3 skyBoxSize = glm::vec3(5.0f);
+	glm::vec3 loginPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    glm::vec3 plainSize = glm::vec3(7.0f);
+
 
     triangleModel->translate(treePosition);
     triangleModel->scale(treeSize);
 
-    //plainModel->scale(plainSize);
+	houseModel->translate(housePosition);
+	houseModel->scale(houseSize);
+
+	loginModel->translate(loginPosition);
+
     plainModelSkybox->scale(plainSize);
 
     primitiveScene->addObject(triangleModel);
+
     forestScene->addObject(plainModelSkybox);
+	forestScene->addObject(houseModel);
+	forestScene->addObject(loginModel);
+
     nightForestScene->addObject(plainModelSkybox);
-    //forestScene->addObject(plainModel);
-    //nightForestScene->addObject(plainModel);
+
     skyBoxScene->addObject(plainModelSkybox);
 
     
