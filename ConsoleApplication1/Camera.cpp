@@ -14,6 +14,11 @@ glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
     return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 }
 
+void Camera::setProjectionMatrix(const glm::mat4& projection)
+{
+	projectionMatrix = projection;
+}
+
 void Camera::processMouseMovement(float xoffset, float yoffset) {
     yaw += xoffset;
     pitch += yoffset;

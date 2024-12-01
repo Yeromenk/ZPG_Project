@@ -34,6 +34,10 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     camera = new Camera(0.0f, 2.0f, 3.0f, 0.0f, 1.0f, 0.0f);
     cameraController = new CameraController(camera);
 
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    glfwSetWindowUserPointer(window, this);
+
     // scenes
     primitiveScene = new Scene();
     forestScene = new Scene();
@@ -328,4 +332,20 @@ void Application::processInput(GLFWwindow* glfwWindow) {
     }
 
     cameraController->processInput(glfwWindow, deltaTime);
+}
+
+void Application::updateProjectionMatrix(int width, int height) {
+	glViewport(0, 0, width, height);
+	camera->setProjectionMatrix(camera->getProjectionMatrix((float)width / (float)height));
+}
+
+void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+
+    Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+    if (app) 
+    {
+        app->updateProjectionMatrix(width, height);
+    }
 }

@@ -29,6 +29,7 @@ public:
     void run();
     void mainLoop();
     void processInput(GLFWwindow* window);
+    void updateProjectionMatrix(int width, int height);
 
 private:
     GLFWwindow* window;
@@ -40,6 +41,8 @@ private:
     Scene* nightForestScene;
     Camera* camera;
     CameraController* cameraController;
+
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 };
 
 #endif 

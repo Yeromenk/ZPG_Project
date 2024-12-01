@@ -18,6 +18,7 @@ public:
     glm::mat4 getProjectionMatrix(float aspectRatio) const;
 
     void processMouseMovement(float xoffset, float yoffset);
+	void setProjectionMatrix(const glm::mat4& projection);
     void move_forward(float deltaTime);
 	void move_backward(float deltaTime);
 	void move_left(float deltaTime);
@@ -28,6 +29,7 @@ public:
 
 private:
     glm::vec3 position;
+	glm::mat4 projectionMatrix;
     glm::vec3 up;
     glm::vec3 front;
     float yaw;
