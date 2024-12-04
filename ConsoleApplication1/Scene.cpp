@@ -69,6 +69,7 @@ void Scene::draw(Camera* camera) {
             glUseProgram(0);
         }
     }
+
 }
 
 void Scene::setLight(Light* light) {

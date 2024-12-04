@@ -99,18 +99,21 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     Material* plainMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
 	Material* houseMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.7f, 0.7f, 0.7f));
 	Material* loginMaterial = new Material(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.7f, 0.7f, 0.7f));
+      
 
 
     // textures
     Texture* triangleTexture = new Texture("./Textures/wooden_fence.png");
     Texture* plainTexture = new Texture("./Textures/grass.png");
 	Texture* skyBoxTexture = new Texture("./Models/House/model.png");
+	Texture* treeTexture = new Texture("./Models/Tree/tree.png");
 
 	// models
     Model* triangleModel = new Model(textureShader, triangleVertices, sizeof(triangleVertices), 3, GL_TRIANGLES, "triangle", triangleMaterial, triangleTexture);
     Model* plainModel = new Model(lambertTextureShader, plain, sizeof(plain), 6, GL_TRIANGLES, "plain", plainMaterial, plainTexture);
-	Model* houseModel = new Model("./Models/House/model.obj", phongTextureShader, houseMaterial, skyBoxTexture);
-	Model* loginModel = new Model("./Models/Login/login.obj", blinnTextureShader , loginMaterial, triangleTexture);
+	Model* houseModel = new Model("./Models/House/model.obj", phongTextureShader, houseMaterial, skyBoxTexture, "house");
+	Model* loginModel = new Model("./Models/Login/login.obj", blinnTextureShader , loginMaterial, triangleTexture, "login");
+    
 	
 
     glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, -2.0f);
@@ -119,7 +122,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	glm::vec3 housePosition = glm::vec3(6.5f, 0.0f, 0.0f);
 	glm::vec3 houseSize = glm::vec3(0.1f);
 
-	glm::vec3 loginPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 loginPosition = glm::vec3(5.0f, 0.0f, 3.0f);
 
     glm::vec3 plainSize = glm::vec3(7.0f);
 
@@ -194,14 +197,14 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 
     // scene 2 - forest scene with lights. 5 scene - night forest scene with spotlight and 6 scene - skybox
     for (int i = 0; i < 55; i++) {
-        Model* treeModel = new Model(shaderPhong, tree, sizeof(tree), 92814, GL_TRIANGLES, "tree", treeMaterial);
+        Model* treeModel = new Model("./Models/Tree/tree.obj", phongTextureShader, treeMaterial, treeTexture, "tree");
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
         float randomZ = (float)(rand() % 1000) / 100.0f - 5.0f;
 
         glm::vec3 treePosition = glm::vec3(randomX, groundY, randomZ);
-        glm::vec3 treeScale = glm::vec3(0.03f + (float)(rand() % 10) / 100.0f);
+        glm::vec3 treeScale = glm::vec3(0.015f + (float)(rand() % 5) / 100.0f);
         glm::vec3 treeRotate = glm::vec3(0.f, 0.8f, 0.f);
         float randomRotation = static_cast<float>(rand() % 360);
 
@@ -221,7 +224,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         float randomZ = (float)(rand() % 1000) / 100.0f - 5.0f;
 
         glm::vec3 bushPosition = glm::vec3(randomX, groundY, randomZ);
-        glm::vec3 bushScale = glm::vec3(0.05f + (float)(rand() % 10) / 100.0f);
+        glm::vec3 bushScale = glm::vec3(0.3f + (float)(rand() % 10) / 100.0f);
         glm::vec3 bushRotate = glm::vec3(0.f, 0.8f, 0.f);
         float randomRotation = static_cast<float>(rand() % 360);
 

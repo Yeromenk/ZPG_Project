@@ -32,8 +32,8 @@ Model::Model(ShaderProgram* shaderProgram, const float* points, int arraySize, i
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Model::Model(const char* path, ShaderProgram* shaderProgram, Material* material, Texture* texture)
-	: DrawableObject(shaderProgram, "model"), material(material), texture(texture) {
+Model::Model(const char* path, ShaderProgram* shaderProgram, Material* material, Texture* texture, const std::string& type)
+	: DrawableObject(shaderProgram, type), material(material), texture(texture)  {
 	Assimp::Importer importer;
 	unsigned int importOptions = aiProcess_Triangulate
 		| aiProcess_OptimizeMeshes
@@ -104,6 +104,7 @@ void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 		glDepthFunc(GL_LEQUAL);
 		shader->setMat4("viewMatrix", glm::mat4(glm::mat3(viewMatrix)));
 		shader->setMat4("projectionMatrix", projectionMatrix);
+		glDepthFunc(GL_LESS);
 	}
 	else
 	{
