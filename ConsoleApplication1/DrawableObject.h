@@ -28,6 +28,8 @@ public:
 	glm::mat4 getModelMatrix() const { return modelMatrix; }
     std::string getType() const { return type;  }
 
+    virtual int getID() const = 0;
+
 protected:
     ShaderProgram* shader;
     TransformationComposite* transformationApply;

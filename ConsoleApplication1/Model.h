@@ -12,18 +12,22 @@
 
 class Model : public DrawableObject {
 public:
-    Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type, Material* material, Texture* texture=nullptr);
-    Model(const char* path, ShaderProgram* shaderProgram, Material* material, Texture* texture=nullptr, const std::string& type=nullptr);
+    Model(ShaderProgram* shaderProgram, const float* points, int arraySize, int vertexCount, GLenum drawMode, const std::string& type, Material* material,  int id, Texture* texture = nullptr);
+
+    Model(const char* path, ShaderProgram* shaderProgram, Material* material, Texture* texture, const std::string& type, int id);
     ~Model();
 
     void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
+
+    int getID() const override;
 
 private:
     GLuint VAO, VBO;
     GLenum drawMode;
     int vertexCount;
-	Material* material;
-	Texture* texture;
+    int id;
+    Material* material;
+    Texture* texture;
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <vector>
 #include "DrawableObject.h"
 #include <glm/glm.hpp>
+#include <SOIL.h>
 
 #include "Light.h"
 
@@ -16,6 +17,7 @@ public:
 
     void addObject(DrawableObject* object);
     void draw(Camera* camera);
+	void drawSkybox(Camera* camera);
     void setLight(Light* light);
     void rotateTrees();
 	void translateBushes(float maxTranslation);

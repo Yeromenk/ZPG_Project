@@ -1,24 +1,37 @@
 #include "Texture.h"
 
 
-Texture::Texture(const std::string& filePath) {
-    // Load texture using SOIL
-    textureID = SOIL_load_OGL_texture(
-        filePath.c_str(),
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_INVERT_Y
-    );
+Texture::Texture() {
+	this->textureID = -1;
+    this->unitId = -1;
+}
 
-    if (textureID == 0) {
-        std::cerr << "Could not load texture: " << filePath << std::endl;
+void Texture::loadTexture(const char* filePath, int unitId)
+{
+    this->unitId = unitId;
+    glActiveTexture(GL_TEXTURE0 + unitId);
+    this->textureID = SOIL_load_OGL_texture(filePath, SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+
+    if (this->textureID == 0) {
+        std::cerr << "2D texture failed to load." << std::endl;
     }
 
-    // Set texture parameters
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, this->unitId);
+}
+
+void Texture::loadCubeMap(const char* xpos, const char* xneg, const char* ypos, const char* yneg, const char* zpos, const char* zneg, int unitId)
+{
+    this->unitId = unitId;
+    glActiveTexture(GL_TEXTURE0 + unitId);
+    this->textureID = SOIL_load_OGL_cubemap(xpos, xneg, ypos, yneg, zpos, zneg, SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	printf("Texture ID: %d\n", this->textureID); ///
+
+    if (this->textureID == 0) {
+        std::cerr << "Cubemap texture failed to load." << std::endl;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, this->textureID);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 Texture::~Texture() {

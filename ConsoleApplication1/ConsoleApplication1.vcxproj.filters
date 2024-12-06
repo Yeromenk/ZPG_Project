@@ -70,6 +70,9 @@
     <ClInclude Include="Models\skycube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BezierCubic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderProgram.cpp">
@@ -127,6 +130,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierCubic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

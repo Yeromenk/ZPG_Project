@@ -28,18 +28,22 @@ void ShaderProgram::setMat3(const std::string& name, const glm::mat3& mat) const
 }
 
 void ShaderProgram::update(const char* message) {
-	if (message == "camera") {
-		setMat4("viewMatrix", camera->getViewMatrix());
-		setMat4("projectionMatrix", camera->getProjectionMatrix(1.0f));
-	}
+    if (message == "camera") {
+        if (camera) {
+            setMat4("viewMatrix", camera->getViewMatrix());
+            setMat4("projectionMatrix", camera->getProjectionMatrix(1.0f));
+        }
+    }
 
-	if (message == "light")
-	{
-		setVec3("lightPosition", light->getPosition());
-		setVec3("lightColor", light->getColor());
-		setFloat("lightIntensity", light->getIntensity());
-		setFloat("lightAttenuation", light->getAttenuation());
-	}
+    if (message == "light")
+    {
+        if (light) {
+            setVec3("lightPosition", light->getPosition());
+            setVec3("lightColor", light->getColor());
+            setFloat("lightIntensity", light->getIntensity());
+            setFloat("lightAttenuation", light->getAttenuation());
+        }
+    }
    
 }
 

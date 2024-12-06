@@ -3,9 +3,12 @@
 Scene::Scene() {}
 
 Scene::~Scene() {
-  /*  for (auto object : objects) {
+    /*for (auto object : objects) {
         delete object;
-    }*/
+    }
+	for (auto light : lights) {
+		delete light;
+	}*/
 }
 
 void Scene::rotateTrees() {
@@ -71,6 +74,29 @@ void Scene::draw(Camera* camera) {
     }
 
 }
+
+void Scene::drawSkybox(Camera* camera)
+{
+    glDepthFunc(GL_LEQUAL);
+
+	glm::mat4 viewMatrix = glm::mat4(glm::mat3(camera->getViewMatrix()));
+	glm::mat4 projectionMatrix = camera->getProjectionMatrix(800.0f / 600.0f);
+
+    for (auto object : objects) {
+        if (object->getType() == "skybox") {
+            ShaderProgram* shader = object->getShaderProgram();
+            shader->use();
+            shader->setMat4("view", viewMatrix);
+            shader->setMat4("projection", projectionMatrix);
+            shader->setInt("skybox", 1); // Ensure the uniform is set
+
+            object->draw(viewMatrix, projectionMatrix);
+        }
+    }
+
+	glDepthFunc(GL_LESS);
+}
+
 
 void Scene::setLight(Light* light) {
 	lights.push_back(light);

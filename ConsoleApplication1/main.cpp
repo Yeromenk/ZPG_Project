@@ -4,7 +4,7 @@
  *
  * @brief Main function
  *
- * @author Yeromenko Maksym
+ * @author Yeromenko Maksym | YER0013
   **/
 
 #include <GL/glew.h>
