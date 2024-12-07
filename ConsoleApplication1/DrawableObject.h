@@ -24,9 +24,9 @@ public:
     virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
 	void applyTransformations(ShaderProgram* shaderProgram) const;
 	void randomTranslate(float maxTranslation);
-	ShaderProgram* getShaderProgram() const { return shader; }
-	glm::mat4 getModelMatrix() const { return modelMatrix; }
-    std::string getType() const { return type;  }
+    ShaderProgram* getShaderProgram() const; 
+    glm::mat4 getModelMatrix() const; 
+    std::string getType() const; 
 
     virtual int getID() const = 0;
 

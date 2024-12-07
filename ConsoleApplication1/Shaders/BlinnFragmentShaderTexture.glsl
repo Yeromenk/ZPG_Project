@@ -64,16 +64,20 @@ vec3 calculateSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 
     float theta = dot(lightDir, normalize(-vec3(light.direction)));
     float epsilon = light.cutoff - 0.05;  
-    float intensity = clamp((theta - light.cutoff) / epsilon, 0.0, 1.0);
+    float intensity = clamp((theta - epsilon) / (light.cutoff - epsilon), 0.0, 1.0);
 
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * material.diffuse * vec3(light.diffuse) * attenuation * intensity;
+    if (intensity > 0.0) {
+        float diff = max(dot(normal, lightDir), 0.0);
+        vec3 diffuse = diff * material.diffuse * vec3(light.diffuse) * attenuation * intensity;
 
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    vec3 specular = spec * material.specular * vec3(light.diffuse) * attenuation * intensity;
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+        vec3 specular = spec * material.specular * vec3(light.diffuse) * attenuation * intensity;
 
-    return diffuse + specular;
+        return diffuse + specular;
+    } else {
+        return vec3(0.0);
+    }
 }
 
 void main(void) {

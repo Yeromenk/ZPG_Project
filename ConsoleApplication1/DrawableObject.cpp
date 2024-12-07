@@ -1,6 +1,5 @@
 #include "DrawableObject.h"
 
-#include "TransformationComposite.h"
 
 DrawableObject::DrawableObject(ShaderProgram* shader, const std::string& type) : shader(shader), modelMatrix(1.0f), type(type)
 {
@@ -40,4 +39,19 @@ void DrawableObject::randomTranslate(float maxTranslation)
     glm::vec3 translation(x, y, z);
     transformationApply->addTransformation(new TransformationTranslate(translation));
     modelMatrix = glm::translate(modelMatrix, translation);
+}
+
+ShaderProgram* DrawableObject::getShaderProgram() const
+{
+	return shader;
+}
+
+glm::mat4 DrawableObject::getModelMatrix() const
+{
+	return modelMatrix;
+}
+
+std::string DrawableObject::getType() const
+{
+	return type;
 }

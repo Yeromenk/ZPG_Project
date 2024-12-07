@@ -48,10 +48,6 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     lightScene = new Scene();
 
     // lights
-   /* Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.0f);
-    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 0.0f, 0.0f);*/
-    //Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
-
 	Spotlight* spotLight = new Spotlight(camera, glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.02f, glm::cos(glm::radians(15.0f)));
 	PointLight* pointLight = new PointLight(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f);
 	DirectionalLight* directionalLight = new DirectionalLight(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f);
@@ -61,10 +57,6 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     forestScene->setLight(pointLight);
     forestScene->setLight(directionalLight);
     forestScene->setLight(spotLight);
-
-   /* Light* nightSpotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.01f, glm::cos(glm::radians(12.5f)));
-
-    std::vector<Light*> nightLights = { nightSpotLight };*/
 
     nightForestScene->setLight(spotLight);
 
@@ -161,6 +153,8 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     forestScene->addObject(skyBoxModel);
 
     nightForestScene->addObject(plainModel);
+	nightForestScene->addObject(houseModel);
+	nightForestScene->addObject(loginModel);
 
     glm::vec3 spherePositions[] = {
         glm::vec3(-1.0f, 0.0f, 1.0f),
@@ -234,7 +228,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     }
 
     for (int i = 0; i < 55; i++) {
-        Model* bushModel = new Model(lambertShader, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial, generateUniqueID(), nullptr);
+        Model* bushModel = new Model(shaderPhong, bushes, sizeof(bushes), 92814, GL_TRIANGLES, "bush", bushMaterial, generateUniqueID(), nullptr);
 
         float randomX = (float)(rand() % 1000) / 100.0f - 5.0f;
         float groundY = 0.0f;
@@ -314,16 +308,12 @@ void Application::mainLoop() {
         if (spotLight) {
             spotLight->update();
         }
-       /* Light* spotLight = nightForestScene->getLights()[0];
-        spotLight->setPosition(camera->getPosition());
-        spotLight->setDirection(camera->getDirection());*/
 
         // Dynamic rotation
         forestScene->rotateTrees();
-
 		//forestScene->translateBushes(5.0f);
-		currentScene->drawSkybox(camera);
 
+		currentScene->drawSkybox(camera);
         currentScene->draw(camera);
 
         glfwSwapBuffers(window);
