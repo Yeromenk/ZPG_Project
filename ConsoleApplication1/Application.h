@@ -20,6 +20,10 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include "Light.h"
 #include "Model.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "Spotlight.h"
+#include "Models/skycube.h"
 
 
 class Application {

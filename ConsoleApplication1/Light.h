@@ -1,39 +1,33 @@
-#ifndef LIGHT_H
-#define LIGHT_H
-
-#include <glm/glm.hpp>
+// Light.h
+#pragma once
 
 #include "Subject.h"
+#include <glm/glm.hpp>
 
 class Light : public Subject {
 public:
-    Light(int type, const glm::vec3& position, const glm::vec3 direction ,const glm::vec3& color, float intensity, float attenuation, float cutoff);
+    Light(const glm::vec3& color, float intensity);
+    virtual ~Light() = default;
 
-	int getType() const;
-
-    void setPosition(const glm::vec3& position);
     void setColor(const glm::vec3& color);
     void setIntensity(float intensity);
-    void setAttenuation(float attenuation);
-	void setDirection(const glm::vec3& direction);
 
-    glm::vec3 getPosition() const;
     glm::vec3 getColor() const;
-    glm::vec3 getDirection() const;
-
     float getIntensity() const;
-	float getAttenuation() const;
-	float getCutoff() const;
 
-private:
-    int type;
-    glm::vec3 position;
-	glm::vec3 direction;
+    // Optionally, make getType() pure virtual if needed
+    virtual int getType() const = 0;
+
+
+    // Add virtual methods with default implementations
+    virtual glm::vec3 getPosition() const { return glm::vec3(0.0f); }
+    virtual glm::vec3 getDirection() const { return glm::vec3(0.0f); }
+    virtual float getAttenuation() const { return 0.0f; }
+    virtual float getCutoff() const { return 0.0f; }
+
+
+protected:
     glm::vec3 color;
-
     float intensity;
-	float attenuation;
-    float cutoff;
 };
 
-#endif 

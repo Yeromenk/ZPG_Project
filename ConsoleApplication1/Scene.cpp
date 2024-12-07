@@ -63,6 +63,20 @@ void Scene::draw(Camera* camera) {
         for (auto object : objects) {
             ShaderProgram* shader = object->getShaderProgram();
             shader->use();
+            shader->setInt("numberOfLights", static_cast<int>(lights.size()));
+            for (int i = 0; i < lights.size(); i++) {
+                shader->setLight("lights", *lights[i], i);
+            }
+            shader->setVec3("viewPos", camera->getPosition());
+            // Draw the object
+            object->draw(viewMatrix, projectionMatrix);
+        }
+    }
+
+    /*if (!lights.empty()) {
+        for (auto object : objects) {
+            ShaderProgram* shader = object->getShaderProgram();
+            shader->use();
             shader->setInt("numberOfLights", lights.size());
             for (int i = 0; i < lights.size(); i++) {
                 shader->setLight("lights", *lights[i], i);
@@ -71,7 +85,7 @@ void Scene::draw(Camera* camera) {
 
             glUseProgram(0);
         }
-    }
+    }*/
 
 }
 

@@ -1,7 +1,5 @@
 #include "Application.h"
 
-#include "Models/skycube.h"
-
 float triangleVertices[] = {
     -0.3f,  0.8f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
      0.3f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
@@ -50,9 +48,13 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     lightScene = new Scene();
 
     // lights
-    Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.0f);
-    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 0.0f, 0.0f);
-    Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
+   /* Light* pointLight = new Light(0, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.0f);
+    Light* directionalLight = new Light(1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f, 0.0f, 0.0f);*/
+    //Light* spotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, glm::cos(glm::radians(12.5f)));
+
+	Spotlight* spotLight = new Spotlight(camera, glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.02f, glm::cos(glm::radians(15.0f)));
+	PointLight* pointLight = new PointLight(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f);
+	DirectionalLight* directionalLight = new DirectionalLight(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), 1.0f);
 
     std::vector<Light*> lights = { pointLight, directionalLight, spotLight };
 
@@ -60,9 +62,9 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
     forestScene->setLight(directionalLight);
     forestScene->setLight(spotLight);
 
-    Light* nightSpotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.01f, glm::cos(glm::radians(12.5f)));
+   /* Light* nightSpotLight = new Light(2, camera->getPosition(), camera->getDirection(), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, 0.01f, glm::cos(glm::radians(12.5f)));
 
-    std::vector<Light*> nightLights = { nightSpotLight };
+    std::vector<Light*> nightLights = { nightSpotLight };*/
 
     nightForestScene->setLight(spotLight);
 
@@ -105,10 +107,6 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	Material* loginMaterial = new Material(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.7f, 0.7f, 0.7f));
 
     // textures
-   /* Texture* triangleTexture = new Texture("./Textures/wooden_fence.png");
-    Texture* plainTexture = new Texture("./Textures/grass.png");
-	Texture* houseTexture = new Texture("./Models/House/model.png");
-	Texture* treeTexture = new Texture("./Models/Tree/tree.png");*/
 	Texture* triangleTexture = new Texture();
 	triangleTexture->loadTexture("./Textures/wooden_fence.png", 0);
 	Texture* plainTexture = new Texture();
@@ -214,7 +212,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
         }
     }
 
-    // scene 2 - forest scene with lights. 5 scene - night forest scene with spotlight and 6 scene - skybox
+    // scene 2 - forest scene with lights. 5 scene - night forest scene with spotlight
     for (int i = 0; i < 55; i++) {
         Model* treeModel = new Model("./Models/Tree/tree.obj", phongTextureShader, treeMaterial, treeTexture, "tree", generateUniqueID());
 
@@ -312,9 +310,13 @@ void Application::mainLoop() {
         cameraController->processMouseMovement(xoffset, yoffset);
 
 		// Position and direction of the spotlight are updated together with the camera
-        Light* spotLight = nightForestScene->getLights()[0];
+        Spotlight* spotLight = dynamic_cast<Spotlight*>(nightForestScene->getLights()[0]);
+        if (spotLight) {
+            spotLight->update();
+        }
+       /* Light* spotLight = nightForestScene->getLights()[0];
         spotLight->setPosition(camera->getPosition());
-        spotLight->setDirection(camera->getDirection());
+        spotLight->setDirection(camera->getDirection());*/
 
         // Dynamic rotation
         forestScene->rotateTrees();

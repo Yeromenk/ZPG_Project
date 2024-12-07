@@ -58,23 +58,28 @@ vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calculateSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    vec3 lightDir = normalize(vec3(light.position) - fragPos);
-    float distance = length(vec3(light.position) - fragPos);
-    float attenuation = 1.0 / (1.0 + light.attenuation * distance * distance);
+       vec3 lightDir = normalize(vec3(light.position) - fragPos);
+       float distance = length(vec3(light.position) - fragPos);
+       float attenuation = 1.0 / (1.0 + light.attenuation * distance * distance);
 
-    float theta = dot(lightDir, normalize(-vec3(light.direction)));
-    float epsilon = light.cutoff - 0.05;  
-    float intensity = clamp((theta - light.cutoff) / epsilon, 0.0, 1.0);
+       float theta = dot(lightDir, normalize(-vec3(light.direction)));
+       float epsilon = light.cutoff - 0.05;  
+       float intensity = clamp((theta - epsilon) / (light.cutoff - epsilon), 0.0, 1.0);
 
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * material.diffuse * vec3(light.diffuse) * attenuation * intensity;
+       // Only proceed if intensity is greater than zero
+       if (intensity > 0.0) {
+           float diff = max(dot(normal, lightDir), 0.0);
+           vec3 diffuse = diff * material.diffuse * vec3(light.diffuse) * attenuation * intensity;
 
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = spec * material.specular * vec3(light.diffuse) * attenuation * intensity;
+           vec3 reflectDir = reflect(-lightDir, normal);
+           float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+           vec3 specular = spec * material.specular * vec3(light.diffuse) * attenuation * intensity;
 
-    return diffuse + specular;
-}
+           return diffuse + specular;
+       } else {
+           return vec3(0.0);
+       }
+   }
 
 void main(void) {
     vec3 normal = normalize(ex_worldNormal);
