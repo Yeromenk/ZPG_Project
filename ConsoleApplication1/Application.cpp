@@ -82,12 +82,12 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	constantTextureShader->create("./Shaders/ConstantVertexShaderTexture.glsl", "./Shaders/ConstantFragmentShaderTexture.glsl");
 	ShaderProgram* lambertTextureShader = new ShaderProgram(camera, lights);
 	lambertTextureShader->create("./Shaders/LambertVertexShaderTexture.glsl", "./Shaders/LambertFragmentShaderTexture.glsl");
-	ShaderProgram* phongTextureShader = new ShaderProgram(camera, lights);
+	phongTextureShader = new ShaderProgram(camera, lights);
 	phongTextureShader->create("./Shaders/PhongVertexShaderTexture.glsl", "./Shaders/PhongFragmentShaderTexture.glsl");
 	
 
     // materials
-    Material* treeMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f));
+    treeMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f));
     Material* bushMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.4f, 0.8f, 0.4f), glm::vec3(0.2f, 0.2f, 0.2f));
     Material* sphereMaterial = new Material(glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.5f, 0.5f, 0.5f));
     Material* giftMaterial = new Material(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.8f, 0.4f, 0.4f), glm::vec3(0.5f, 0.5f, 0.5f));
@@ -107,7 +107,7 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 	houseTexture->loadTexture("./Models/House/model.png", 0);
     Texture* skyBoxTexture = new Texture();
     skyBoxTexture->loadCubeMap("./Textures/posx.jpg","./Textures/negx.jpg" ,"./Textures/posy.jpg", "./Textures/negy.jpg", "./Textures/posz.jpg", "./Textures/negz.jpg", 1);
-	Texture* treeTexture = new Texture();
+	treeTexture = new Texture();
 	treeTexture->loadTexture("./Models/Tree/tree.png", 0);
 
 	// models
@@ -253,11 +253,23 @@ Application::Application() : window(nullptr), currentScene(nullptr), primitiveSc
 Application::~Application() {
     delete camera;
     delete cameraController;
+
     delete primitiveScene;
     delete forestScene;
     delete nightForestScene;
     delete sphereScene;
     delete lightScene;
+
+	delete treeMaterial;
+
+	delete treeTexture;
+	delete phongTextureShader;
+
+	for (auto object : allObjects) {
+		delete object;
+	}
+
+
     glfwDestroyWindow(window);
     glfwTerminate();
 }
