@@ -21,6 +21,7 @@ public:
 private:
     GLuint textureID;
 	int unitId;
+	bool isCubeMap;
 };
 
 #endif // TEXTURE_H

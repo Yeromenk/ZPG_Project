@@ -109,10 +109,10 @@ void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 
 	if (type == "skybox")
 	{
-		glDepthFunc(GL_LEQUAL);
+		//glDepthFunc(GL_LEQUAL);
 		shader->setMat4("view", glm::mat4(glm::mat3(viewMatrix)));
 		shader->setMat4("projection", projectionMatrix);
-		glDepthFunc(GL_LESS);
+		//glDepthFunc(GL_LESS);
 	}
 	else
 	{
@@ -141,10 +141,10 @@ void Model::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 		texture->unbind();
 	}
 
-	if (type == "skybox")
+	/*if (type == "skybox")
 	{
 		glDepthFunc(GL_LESS);
-	}
+	}*/
 
 	glUseProgram(0);
 }
